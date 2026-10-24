@@ -7,6 +7,9 @@
     "doc": "docs"
   },
   "scripts": {
+    "dev": "wrangler dev",
+    "types": "wrangler types",
+    "typecheck": "tsc --noEmit",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,6 +25,13 @@
   },
   "homepage": "https://github.com/ammarhairiHD/ABC-TRIP-2026#readme",
   "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2",
     "wrangler": "^4.152.0"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "zod": "^4.6.7"
   }
 }

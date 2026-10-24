@@ -5,6 +5,10 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
 
+  "vars": {
+    "MEDIA_BASE_URL": "https://abctrip2026-media.ammarhairi.tech"
+  },
+
   "d1_databases": [
     {
       "binding": "DB",
