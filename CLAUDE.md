@@ -4,9 +4,9 @@ The website. Shared project rules: `../CLAUDE.md`. Can be a public repo (portfol
 
 ## Stack
 
-- **web/**: React 19 + Vite + TypeScript, Tailwind + shadcn/ui, Motion (scroll story, altitude line), React Router (`/`, `/ms/`, `/ne/` prefixes), TanStack Query, react-i18next + i18next-http-backend: UI strings bundled from `src/locales/{en,ms,ne}.json`, story content loaded per day from `img.<domain>/i18n/{lang}/day-{n}.json` (fallback to English), yet-another-react-lightbox + Video plugin, BlurHash. Noto Sans Devanagari for Nepali.
+- **web/**: React 19 + Vite + TypeScript, Tailwind + shadcn/ui, Motion (scroll story, altitude line), React Router (`/`, `/ms/`, `/ne/` prefixes), TanStack Query, react-i18next + i18next-http-backend: UI strings bundled from `src/locales/{en,ms,ne}.json`, story content loaded per day from `https://abctrip2026-media.ammarhairi.tech/i18n/{lang}/day-{n}.json` (fallback to English), yet-another-react-lightbox + Video plugin, BlurHash. Noto Sans Devanagari for Nepali.
 - **api/**: Express + TypeScript on Cloudflare Workers (`httpServerHandler` from `cloudflare:node`, `nodejs_compat`), Zod. Read-only except unlock. Language-free: returns ids and structure; the app looks words up in i18n.
-- **Cloudflare**: one Worker serves the React build + `/api/*`; D1 database `himalaya`; R2 `himalaya-media` (public at `img.<domain>`) and `himalaya-originals` (private). Secrets: `DOWNLOAD_CODE_HASH`, `TOKEN_SECRET`.
+- **Cloudflare**: one Worker (`abctrip2026.ammarhairi.tech`, not deployed yet) serves the React build + `/api/*`; D1 database `himalaya` (id `ccdacd9a-0a6f-4a39-b20f-c2228044a1a3`, APAC; migration `0001_init.sql` applied); R2 `himalaya-media` (public at `abctrip2026-media.ammarhairi.tech`) and `himalaya-originals` (private, no domain). Secrets: `DOWNLOAD_CODE_HASH`, `TOKEN_SECRET`. `wrangler.jsonc` binds `DB`, `MEDIA`, `ORIGINALS`.
 - Schema: `api/migrations/0001_init.sql` is the contract with `abc-face-tools`.
 
 ## API
