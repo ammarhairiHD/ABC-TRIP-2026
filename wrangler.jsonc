@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "himalaya-gallery",
+  "main": "api/src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "himalaya",
+      "database_id": "ccdacd9a-0a6f-4a39-b20f-c2228044a1a3",
+      "migrations_dir": "api/migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    { "binding": "MEDIA", "bucket_name": "himalaya-media" },
+    { "binding": "ORIGINALS", "bucket_name": "himalaya-originals" }
+  ]
+}
