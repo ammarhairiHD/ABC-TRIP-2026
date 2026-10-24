@@ -1,6 +1,6 @@
 {
   "nav": { "climb": "The climb", "wayHome": "The way home", "people": "People", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language" },
-  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "ofUs": "of us", "days": "days", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
+  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
   "climb": { "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos" },
   "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell" },
   "viewer": { "inThisPhoto": "In this photo", "partOfMoment": "Part of the moment: {{title}}", "download": "Download original", "close": "Close", "previous": "Previous", "next": "Next" },
