@@ -10,6 +10,14 @@ const PORT = 3000;
 
 const app = express();
 
+// Pre-launch: keep the whole site out of search indexes. Pair with
+// web/public/_headers (static assets) and web/public/robots.txt.
+// Remove once the group has seen the finished site.
+app.use((_req, res, next) => {
+  res.set("X-Robots-Tag", "noindex, nofollow");
+  next();
+});
+
 app.use("/api", (_req, res, next) => {
   res.set("Cache-Control", "public, max-age=300");
   next();

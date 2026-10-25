@@ -5,6 +5,13 @@
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat"],
 
+  // Production: only the custom domain is a public address. workers.dev and
+  // the per-version preview URLs are off so there's no second URL floating
+  // around unprotected by Cloudflare Access.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "abctrip2026.ammarhairi.tech", "custom_domain": true }],
+
   "vars": {
     "MEDIA_BASE_URL": "https://abctrip2026-media.ammarhairi.tech"
   },
