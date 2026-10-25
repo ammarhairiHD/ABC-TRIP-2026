@@ -1,3 +1,11 @@
+export type MomentKind = "challenge" | "highlight" | "funny" | "farewell";
+
+export interface JourneyMoment {
+  id: string;
+  kind: MomentKind;
+  sortOrder: number | null;
+}
+
 export interface JourneyDay {
   id: number;
   date: string;
@@ -5,6 +13,7 @@ export interface JourneyDay {
   half: "climb" | "home";
   mediaCount: number;
   coverThumbUrl: string | null;
+  moments: JourneyMoment[];
 }
 
 export interface JourneyResponse {
@@ -33,9 +42,30 @@ export interface DayPerson {
   mediaCount: number;
 }
 
+export interface MomentHero {
+  id: string;
+  type: "photo" | "video";
+  width: number;
+  height: number;
+  blurhash: string | null;
+  thumbUrl: string;
+  webUrl: string | null;
+  videoUrl: string | null;
+  posterUrl: string | null;
+  previewClipUrl: string | null;
+}
+
+export interface DayMoment {
+  id: string;
+  kind: MomentKind;
+  sortOrder: number | null;
+  hero: MomentHero | null;
+}
+
 export interface DayResponse {
   day: DayInfo;
   people: DayPerson[];
+  moments: DayMoment[];
 }
 
 export interface MediaFace {

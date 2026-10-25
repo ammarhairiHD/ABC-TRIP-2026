@@ -1,8 +1,8 @@
 {
-  "nav": { "climb": "The climb", "climbDays": "Days 1–5", "wayHome": "The way home", "wayHomeDays": "Days 6–11", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoon": "Coming soon", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
+  "nav": { "climb": "The climb", "climbDays": "Days 1–5", "wayHome": "The way home", "wayHomeDays": "Days 6–11", "story": "Day by day", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoon": "Coming soon", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
   "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
   "climb": { "start": "Start", "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos" },
-  "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell" },
+  "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell", "inThisMoment": "In this moment", "previous": "Previous moment", "next": "Next moment", "backToClimb": "Back to the climb" },
   "viewer": { "inThisPhoto": "In this photo", "partOfMoment": "Part of the moment: {{title}}", "download": "Download original", "close": "Close", "previous": "Previous", "next": "Next" },
   "unlock": { "title": "Enter the download code", "body": "Ask Ammar for the code. It stays unlocked until you close this tab.", "code": "Code", "submit": "Unlock and download", "cancel": "Cancel", "wrong": "That code isn't right. Try again.", "unlocked": "Unlocked for this tab" },
   "person": { "journey": "{{name}}'s Himalaya", "summary": "{{photos}} photos · {{videos}} videos · {{days}} of 11 days", "first": "First · Day {{n}}", "last": "Last · Day {{n}}", "mostWith": "Most often with", "together": "Together with", "addPerson": "Add person", "share": "Share this journey", "photos": "Photos", "trailBuddy": "Trail buddy" },
@@ -23,7 +23,7 @@
     "unstoppable": { "name": "Never Gave Up", "description": "Finished every climb, no matter how hard." },
     "veteran": { "name": "Veteran", "description": "Not their first trip to the mountains." }
   },
-  "peoplePage": { "title": "People", "ourPorters": "Our porters" },
+  "peoplePage": { "title": "People", "hint": "Tap a character to see their journey!", "ourPorters": "Our porters" },
   "built": { "title": "How it's built", "body": "A look at how this site was put together is coming soon." },
   "scenery": { "eyebrow": "An exhibition", "instagram": "View on Instagram", "translated": "Translated" },
   "credits": { "title": "The people who made this climb", "scenery": "Scenery", "thanks": "With thanks to", "closingVideo": "Play the closing video" },

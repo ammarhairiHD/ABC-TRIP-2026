@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { env } from "cloudflare:workers";
-import { buildMediaUrls, type MediaType } from "../media-urls.js";
+import { buildMediaUrls, buildPreviewClipUrl, type MediaType } from "../media-urls.js";
 import { badRequest, notFound } from "../lib/errors.js";
 
 export const daysRouter = Router();
@@ -21,6 +21,17 @@ interface DayPersonRow {
   id: string;
   nickname: string;
   media_count: number;
+}
+
+interface MomentRow {
+  id: string;
+  kind: string;
+  sort_order: number | null;
+  hero_id: string | null;
+  hero_type: MediaType | null;
+  hero_width: number | null;
+  hero_height: number | null;
+  hero_blurhash: string | null;
 }
 
 daysRouter.get("/days/:n", async (req, res) => {
@@ -52,9 +63,38 @@ daysRouter.get("/days/:n", async (req, res) => {
     .bind(n)
     .all<DayPersonRow>();
 
+  const { results: moments } = await env.DB.prepare(
+    `SELECT mo.id, mo.kind, mo.sort_order,
+            hm.id AS hero_id, hm.type AS hero_type, hm.width AS hero_width, hm.height AS hero_height,
+            hm.blurhash AS hero_blurhash
+       FROM moments mo
+       LEFT JOIN media hm ON hm.id = mo.hero_media_id AND hm.hidden = 0
+      WHERE mo.day_id = ?
+      ORDER BY mo.sort_order`
+  )
+    .bind(n)
+    .all<MomentRow>();
+
   res.json({
     day: { id: day.id, date: day.date, altitudeM: day.altitude_m, half: day.half },
     people: people.map((row) => ({ id: row.id, nickname: row.nickname, mediaCount: row.media_count })),
+    moments: moments.map((row) => ({
+      id: row.id,
+      kind: row.kind,
+      sortOrder: row.sort_order,
+      hero:
+        row.hero_id && row.hero_type
+          ? {
+              id: row.hero_id,
+              type: row.hero_type,
+              width: row.hero_width,
+              height: row.hero_height,
+              blurhash: row.hero_blurhash,
+              ...buildMediaUrls(env.MEDIA_BASE_URL, row.hero_id, row.hero_type),
+              previewClipUrl: buildPreviewClipUrl(env.MEDIA_BASE_URL, row.hero_id, row.hero_type),
+            }
+          : null,
+    })),
   });
 });
 

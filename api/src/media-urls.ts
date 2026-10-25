@@ -29,3 +29,15 @@ export function buildMediaUrls(base: string, id: string, type: MediaType): Media
     posterUrl: null,
   };
 }
+
+/**
+ * Moment-card hero preview: an ~8s/480p/muted clip made by abc-face-tools'
+ * publish/preview_clips.py for any moment whose hero is a video (key pattern
+ * `video/{id}-preview.mp4`, not stored in D1 since it's a pure function of
+ * the media id). null for photo heroes, which just show the still image.
+ */
+export function buildPreviewClipUrl(base: string, id: string, type: MediaType): string | null {
+  if (type !== "video") return null;
+  const root = base.replace(/\/+$/, "");
+  return `${root}/video/${id}-preview.mp4`;
+}

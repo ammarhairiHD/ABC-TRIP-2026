@@ -65,7 +65,11 @@ export function PeoplePage() {
         <span className="min-w-11" aria-hidden />
       </header>
 
-      <div className="grid grid-cols-3">
+      <div className="mx-3 border-2 border-panel-border bg-panel p-4">
+        <p className="text-sm leading-relaxed text-ink-dim">{t("peoplePage.hint")}</p>
+      </div>
+
+      <div className="mt-4 grid grid-cols-3">
         {ammar && <PersonTile key={ammar.id} person={ammar} />}
         {everyoneElse.map((person) => (
           <PersonTile key={person.id} person={person} />

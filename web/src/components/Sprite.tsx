@@ -99,6 +99,7 @@ export function Sprite({
           src={`/sprites/${activeFileName}`}
           alt=""
           aria-hidden
+          draggable={false}
           className="h-0 w-0 opacity-0"
           onError={() => setStatus(!showingFallback && fallbackFileName ? "fallback" : "placeholder")}
         />

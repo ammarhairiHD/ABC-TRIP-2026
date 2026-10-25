@@ -39,6 +39,7 @@ export function BadgeIcon({ badgeId, label, scale = 2, className }: BadgeIconPro
       src={`/badges/${badgeId}.png`}
       alt=""
       aria-hidden
+      draggable={false}
       onError={() => setBroken(true)}
       className={cn("pixelated", className)}
       style={{ width: size, height: size, imageRendering: "pixelated" }}

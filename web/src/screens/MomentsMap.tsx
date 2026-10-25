@@ -3,50 +3,49 @@ import { useMotionValueEvent, useScroll, useTransform, motion } from "motion/rea
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useJourney } from "../hooks/useJourney";
-import { useDayContent } from "../hooks/useDayContent";
+import { useMomentsContent } from "../hooks/useMomentsContent";
+import { useMoment } from "../hooks/useMoment";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useDelayedVisible } from "../hooks/useDelayedVisible";
 import { Sprite } from "../components/Sprite";
-import { DialogueBox } from "../components/DialogueBox";
+import { MomentDialogueBox } from "../components/MomentDialogueBox";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { cn } from "../lib/utils";
 import { landmarkForDay } from "../config/dayLandmarks";
+import { MOMENT_KIND_STYLES } from "../lib/momentKindStyles";
 import {
-  buildNodes,
-  dayIndexAtProgress,
+  buildMomentNodes,
+  nodeIndexAtProgress,
   positionAlongPath,
   totalHeight,
   CANVAS_WIDTH,
-  type DayMapNode,
-  type MapNode,
+  type MomentMapNode,
+  type MomentPathNode,
 } from "../lib/path";
 
-export function JourneyMap() {
+/** /climb: the moments-only walk -- all 37 moments in sort_order, Start ->
+ * moment 1 -> ... -> moment 37, no day banners. Each moment node wears its
+ * day's landmark sprite (same config DaysMap's day banners use). This is
+ * the main "Begin the climb" path; the day-by-day walk lives at /story. */
+export function MomentsMap() {
   const { data, isLoading } = useJourney();
   const reducedMotion = useReducedMotion();
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeDay, setActiveDay] = useState<number | null>(null);
+  const [activeNode, setActiveNode] = useState<MomentMapNode | null>(null);
   const [dialogueOpen, setDialogueOpen] = useState(false);
-  const lastAutoOpenedDay = useRef<number | null>(null);
+  const lastAutoOpenedIndex = useRef<number | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const nodes = useMemo(() => (data ? buildNodes(data.days) : []), [data]);
+  const nodes = useMemo(() => (data ? buildMomentNodes(data.days) : []), [data]);
   const pageLoading = isLoading || !data || nodes.length === 0;
 
-  // The menu's "The climb" / "The way home" links pass the day to land on
-  // via navigation state (see MenuSheet). Read it once per navigation, then
-  // clear it below so popping back here later doesn't re-trigger it.
+  // The menu's "The climb" / "The way home" links pass a day via navigation
+  // state (see MenuSheet). Here that means "the first moment of that day",
+  // since this path has no day nodes of its own to land on directly.
   const scrollToDay = (location.state as { scrollToDay?: number } | null)?.scrollToDay ?? null;
-  // Keyed on location.key (unique per navigation) rather than the day
-  // number, so clicking the same menu link twice in a row -- e.g. after
-  // scrolling away -- still re-scrolls instead of silently no-op'ing.
   const scrollHandledRef = useRef<string | null>(null);
 
-  // Arriving fresh (no requested day) shouldn't inherit whatever scroll
-  // position the previous page happened to be at -- that threw off the
-  // scroll-progress math this map is built on. Runs once, using whatever
-  // scrollToDay was present at mount.
   useEffect(() => {
     if (scrollToDay == null) window.scrollTo(0, 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -56,10 +55,15 @@ export function JourneyMap() {
     if (scrollToDay == null || pageLoading) return;
     if (scrollHandledRef.current === location.key) return;
     scrollHandledRef.current = location.key;
-    openDay(scrollToDay);
-    document
-      .getElementById(`day-node-${scrollToDay}`)
-      ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    const node = nodes.find(
+      (n): n is MomentMapNode => n.kind === "moment" && n.dayId === scrollToDay
+    );
+    if (node) {
+      openNode(node);
+      document
+        .getElementById(`moment-node-${node.moment.id}`)
+        ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    }
     navigate(location.pathname, { replace: true, state: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollToDay, pageLoading, location.key]);
@@ -77,12 +81,12 @@ export function JourneyMap() {
     if (nodes.length === 0) return;
     setFacing(positionAlongPath(nodes, progress).facing);
 
-    const index = dayIndexAtProgress(nodes, progress);
-    if (index !== lastAutoOpenedDay.current) {
-      lastAutoOpenedDay.current = index;
+    const index = nodeIndexAtProgress(nodes, progress);
+    if (index !== lastAutoOpenedIndex.current) {
+      lastAutoOpenedIndex.current = index;
       const node = nodes[index]!;
-      if (node.kind === "day") {
-        setActiveDay(node.day.id);
+      if (node.kind === "moment") {
+        setActiveNode(node);
         setDialogueOpen(true);
       } else {
         // Scrolled back up to the start node: no story to show here.
@@ -91,31 +95,23 @@ export function JourneyMap() {
     }
   });
 
-  function openDay(dayId: number) {
-    lastAutoOpenedDay.current = nodes.findIndex((n) => n.kind === "day" && n.day.id === dayId);
-    setActiveDay(dayId);
+  function openNode(node: MomentMapNode) {
+    lastAutoOpenedIndex.current = nodes.indexOf(node);
+    setActiveNode(node);
     setDialogueOpen(true);
   }
 
-  const activeContent = useDayContent(dialogueOpen ? activeDay : null);
-  const activeNode = nodes.find((n): n is DayMapNode => n.kind === "day" && n.day.id === activeDay);
+  const momentsContent = useMomentsContent();
+  const activeMomentDetail = useMoment(dialogueOpen && activeNode ? activeNode.moment.id : null);
   const showLoader = useDelayedVisible(pageLoading);
 
-  // In reduced motion, the character snaps to whichever day node is active
+  // In reduced motion, the character snaps to whichever node is active
   // instead of interpolating smoothly along the path as the user scrolls.
   const snappedNode = activeNode ?? nodes[0];
+  const activeMomentText = activeNode ? momentsContent.data?.moment[activeNode.moment.id] : undefined;
 
   return (
     <div className="bg-bg">
-      {/*
-        This container stays mounted even while pageLoading (LoadingScreen
-        renders as an overlay below, not a replacement) so containerRef
-        attaches on the very first render. useScroll's ref-hydration retry
-        only runs once; if the ref were still null when it fires -- which it
-        would be if this div only mounted once data arrived -- scroll
-        tracking never attaches and the sprite/dialogue stop responding to
-        scroll entirely after a client-side navigation here.
-      */}
       <div
         ref={containerRef}
         className="relative mx-auto"
@@ -124,12 +120,12 @@ export function JourneyMap() {
         <PathSvg nodes={nodes} />
 
         {nodes.map((node) =>
-          node.kind === "day" ? (
-            <DayNode
-              key={node.day.id}
+          node.kind === "moment" ? (
+            <MomentNode
+              key={node.moment.id}
               node={node}
-              active={node.day.id === activeDay}
-              onSelect={() => openDay(node.day.id)}
+              active={activeNode?.moment.id === node.moment.id}
+              onSelect={() => openNode(node)}
             />
           ) : (
             <StartNode key="start" node={node} />
@@ -138,7 +134,7 @@ export function JourneyMap() {
 
         {!pageLoading && snappedNode && (
           reducedMotion ? (
-            // No walking animation: the idle sprite just appears at each day, no interpolation.
+            // No walking animation: the idle sprite just appears at each node, no interpolation.
             <div
               className="absolute -translate-x-1/2 -translate-y-1/2"
               style={{ left: snappedNode.x, top: snappedNode.y }}
@@ -158,7 +154,7 @@ export function JourneyMap() {
               style={{ left: characterX, top: characterY }}
             >
               {dialogueOpen ? (
-                // Character has stopped at a day's dialogue: switch to the idle, front-view loop.
+                // Character has stopped at a moment's dialogue: switch to the idle, front-view loop.
                 <Sprite
                   fileName="ammar.png"
                   frameCount={2}
@@ -177,24 +173,30 @@ export function JourneyMap() {
         )}
       </div>
 
-      <DialogueBox
-        open={dialogueOpen}
-        onClose={() => setDialogueOpen(false)}
-        dayNumber={activeDay ?? 1}
-        altitudeM={activeNode?.day.altitudeM ?? null}
-        mediaCount={activeNode?.day.mediaCount}
-        title={activeContent.data?.title}
-        story={activeContent.data?.story}
-        loading={activeContent.isLoading}
-        error={activeContent.isError}
-      />
+      {activeNode && (
+        <MomentDialogueBox
+          open={dialogueOpen}
+          onClose={() => setDialogueOpen(false)}
+          momentId={activeNode.moment.id}
+          kind={activeNode.moment.kind}
+          dayId={activeNode.dayId}
+          altitudeM={activeNode.altitudeM}
+          title={activeMomentText?.title}
+          story={activeMomentText?.story}
+          hero={activeMomentDetail.data?.hero ?? null}
+          people={activeMomentDetail.data?.people ?? []}
+          photoCount={activeMomentDetail.data?.media.length ?? 0}
+          loading={momentsContent.isLoading || activeMomentDetail.isLoading}
+          error={momentsContent.isError || activeMomentDetail.isError}
+        />
+      )}
 
       {showLoader && <LoadingScreen />}
     </div>
   );
 }
 
-function PathSvg({ nodes }: { nodes: MapNode[] }) {
+function PathSvg({ nodes }: { nodes: MomentPathNode[] }) {
   const points = nodes.map((n) => `${n.x},${n.y}`).join(" ");
   return (
     <svg
@@ -215,47 +217,50 @@ function PathSvg({ nodes }: { nodes: MapNode[] }) {
   );
 }
 
-function DayNode({
+/** A moment's spot on the path: its day's landmark sprite, with a small
+ * kind-colored diamond badge in the corner (the dialogue's "Day n" header
+ * carries the day number, so the node itself doesn't need to repeat it). */
+function MomentNode({
   node,
   active,
   onSelect,
 }: {
-  node: DayMapNode;
+  node: MomentMapNode;
   active: boolean;
   onSelect: () => void;
 }) {
   const { t } = useTranslation();
-  const configuredLandmark = landmarkForDay(node.day.id);
-  // Flips back to the plain box if the configured PNG 404s, same probe
-  // technique Sprite.tsx uses for its own fallback.
+  const configuredLandmark = landmarkForDay(node.dayId);
+  // Flips back to the plain diamond marker if the configured PNG 404s, same
+  // probe technique Sprite.tsx uses for its own fallback.
   const [landmarkFailed, setLandmarkFailed] = useState(false);
   const landmark = landmarkFailed ? null : configuredLandmark;
-  const halfColor = node.day.half === "climb" ? "border-accent text-accent-strong" : "border-clay text-clay";
 
   if (!landmark) {
     return (
       <button
-        id={`day-node-${node.day.id}`}
+        id={`moment-node-${node.moment.id}`}
         onClick={onSelect}
-        aria-label={t("climb.day", { n: node.day.id })}
-        className={cn(
-          "absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center",
-          "rounded-sm border-2 font-pixel text-[10px]",
-          halfColor,
-          active ? "bg-panel" : "bg-bg-soft"
-        )}
+        aria-label={t(`moment.${node.moment.kind}`)}
+        className="absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
         style={{ left: node.x, top: node.y, width: 44, height: 44 }}
       >
-        {node.day.id}
+        <span
+          className={cn(
+            "block h-3 w-3 rotate-45 border-2 bg-bg-soft",
+            MOMENT_KIND_STYLES[node.moment.kind],
+            active && "bg-panel ring-2 ring-accent-strong"
+          )}
+        />
       </button>
     );
   }
 
   return (
     <button
-      id={`day-node-${node.day.id}`}
+      id={`moment-node-${node.moment.id}`}
       onClick={onSelect}
-      aria-label={t("climb.day", { n: node.day.id })}
+      aria-label={t(`moment.${node.moment.kind}`)}
       className={cn(
         "absolute -translate-x-1/2 -translate-y-1/2 rounded-sm",
         active && "ring-2 ring-accent-strong"
@@ -266,25 +271,24 @@ function DayNode({
         src={`/sprites/${landmark}.png`}
         alt=""
         aria-hidden
+        draggable={false}
         className="h-full w-full pixelated"
         style={{ imageRendering: "pixelated" }}
         onError={() => setLandmarkFailed(true)}
       />
       <span
         className={cn(
-          "absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center",
-          "rounded-sm border-2 bg-bg font-pixel text-[9px]",
-          halfColor
+          "absolute -bottom-1 -right-1 block h-4 w-4 rotate-45 border-2 bg-bg",
+          MOMENT_KIND_STYLES[node.moment.kind],
+          active && "bg-panel"
         )}
-      >
-        {node.day.id}
-      </span>
+      />
     </button>
   );
 }
 
-/** Where the character stands before Day 1 begins: a landmark, not a day — no dialogue, not tappable. */
-function StartNode({ node }: { node: Extract<MapNode, { kind: "start" }> }) {
+/** Where the character stands before moment 1 begins: a landmark, not a moment -- no dialogue, not tappable. */
+function StartNode({ node }: { node: Extract<MomentPathNode, { kind: "start" }> }) {
   const { t } = useTranslation();
   return (
     <div

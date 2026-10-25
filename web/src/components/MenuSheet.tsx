@@ -71,6 +71,8 @@ export function MenuSheet({ open, onClose }: MenuSheetProps) {
   const sections = [
     { label: t("nav.climb"), sub: t("nav.climbDays"), to: "/climb", scrollToDay: 1 },
     { label: t("nav.wayHome"), sub: t("nav.wayHomeDays"), to: "/climb", scrollToDay: 6 },
+    { label: t("nav.story"), to: "/story" },
+    { label: t("nav.gallery"), to: "/gallery/1" },
     { label: t("nav.people"), to: "/people" },
     { label: t("nav.howItsBuilt"), to: "/built" },
   ];

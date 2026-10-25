@@ -1,9 +1,9 @@
 /**
  * Which landmark sprite (web/public/sprites/{landmark}.png, 64x64, 1 frame)
- * shows on each day's node on the journey map. Edit the ranges below to
- * change it. A day with no matching range, or whose PNG is missing from
- * public/sprites/, falls back to the plain day-number box (see DayNode in
- * JourneyMap.tsx).
+ * shows on each day's node (DaysMap.tsx) and each of that day's moment
+ * nodes (MomentsMap.tsx). Edit the ranges below to change it. A day with no
+ * matching range, or whose PNG is missing from public/sprites/, falls back
+ * to a plain marker instead.
  */
 const DAY_LANDMARKS: { from: number; to: number; landmark: string }[] = [
   { from: 1, to: 2, landmark: "level-city" },

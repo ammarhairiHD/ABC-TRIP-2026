@@ -32,17 +32,20 @@ function ChapterNav({ dayNumber, totalDays }: { dayNumber: number; totalDays: nu
 
   return (
     <div className="flex items-center justify-between gap-2 px-3 py-2">
-      <PixelButton variant="ghost" onClick={() => navigate(hasPrevDay ? `/day/${prevDay}` : "/climb")}>
+      <PixelButton variant="ghost" onClick={() => navigate(hasPrevDay ? `/gallery/${prevDay}` : "/climb")}>
         ◀ {hasPrevDay ? t("climb.day", { n: prevDay }) : t("common.backToMap")}
       </PixelButton>
-      <PixelButton variant="ghost" onClick={() => navigate(hasNextDay ? `/day/${nextDay}` : "/climb")}>
+      <PixelButton variant="ghost" onClick={() => navigate(hasNextDay ? `/gallery/${nextDay}` : "/climb")}>
         {hasNextDay ? t("climb.day", { n: nextDay }) : t("common.backToMap")} ▶
       </PixelButton>
     </div>
   );
 }
 
-export function DayPage() {
+/** The day's gallery: intro, party row + filter, grid, full view, prev/next.
+ * Moment cards used to live here; they now live on the /climb path itself
+ * (see MomentsMap's moment nodes), so this screen is media-only. */
+export function GalleryPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { n } = useParams();

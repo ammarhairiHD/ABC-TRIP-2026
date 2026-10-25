@@ -35,6 +35,21 @@ body {
   image-rendering: pixelated;
 }
 
+/* No "save image" long-press callout, no selection handles, no native drag,
+   on any photo, video or sprite -- including the lightbox's own slide img/
+   video, which this covers too since it's a plain element selector, not
+   scoped to a class. Doesn't touch touch-action/pointer-events, so taps,
+   scrolling, pinch-zoom and video controls are untouched. Paired with the
+   contextmenu/dragstart prevention in App.tsx for browsers (mobile Chrome,
+   Firefox) that don't fully honor these properties alone. */
+img,
+video {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 @keyframes sprite-cycle {
   from {
     background-position-x: 0;

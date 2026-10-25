@@ -85,7 +85,7 @@ export function DialogueBox({
                   <h2 className="font-pixel text-sm leading-relaxed text-ink">{title}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-ink-dim">{story}</p>
                   {mediaCount != null && (
-                    <PixelButton className="mt-4 w-full" onClick={() => navigate(`/day/${dayNumber}`)}>
+                    <PixelButton className="mt-4 w-full" onClick={() => navigate(`/gallery/${dayNumber}`)}>
                       {t("climb.seePhotos", { count: mediaCount })}
                     </PixelButton>
                   )}

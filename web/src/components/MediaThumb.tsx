@@ -47,6 +47,7 @@ export function MediaThumb({ media, onOpen }: { media: MediaLike; onOpen: () => 
           src={blurUrl}
           alt=""
           aria-hidden
+          draggable={false}
           className={cn("absolute inset-0 h-full w-full object-cover transition-opacity", loaded && "opacity-0")}
         />
       )}
@@ -55,6 +56,7 @@ export function MediaThumb({ media, onOpen }: { media: MediaLike; onOpen: () => 
         alt=""
         loading="lazy"
         decoding="async"
+        draggable={false}
         onLoad={() => setLoaded(true)}
         className={cn(
           "absolute inset-0 h-full w-full object-cover transition-opacity duration-300",

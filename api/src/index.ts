@@ -3,6 +3,7 @@ import { httpServerHandler } from "cloudflare:node";
 import { journeyRouter } from "./routes/journey.js";
 import { daysRouter } from "./routes/days.js";
 import { peopleRouter } from "./routes/people.js";
+import { momentsRouter } from "./routes/moments.js";
 import { i18nRouter } from "./routes/i18n.js";
 
 const PORT = 3000;
@@ -17,6 +18,7 @@ app.use("/api", (_req, res, next) => {
 app.use("/api", journeyRouter);
 app.use("/api", daysRouter);
 app.use("/api", peopleRouter);
+app.use("/api", momentsRouter);
 
 app.use("/api", (_req, res) => {
   res.status(404).json({ error: "not found" });
