@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { cn } from "../lib/utils";
 import { PixelButton } from "./PixelButton";
+import { InlineLoader } from "./InlineLoader";
 
 interface DialogueBoxProps {
   open: boolean;
@@ -75,7 +76,7 @@ export function DialogueBox({
             </div>
 
             <div className="mt-3 min-h-16">
-              {loading && <p className="text-ink-dim text-sm">Loading…</p>}
+              {loading && <InlineLoader />}
               {error && (
                 <p className="text-sm text-clay">Couldn't load this day's story right now.</p>
               )}

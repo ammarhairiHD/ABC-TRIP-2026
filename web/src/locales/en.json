@@ -1,5 +1,5 @@
 {
-  "nav": { "climb": "The climb", "climbDays": "Days 1–5", "wayHome": "The way home", "wayHomeDays": "Days 6–11", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
+  "nav": { "climb": "The climb", "climbDays": "Days 1–5", "wayHome": "The way home", "wayHomeDays": "Days 6–11", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoon": "Coming soon", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
   "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
   "climb": { "start": "Start", "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos" },
   "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell" },
@@ -27,5 +27,15 @@
   "built": { "title": "How it's built", "body": "A look at how this site was put together is coming soon." },
   "scenery": { "eyebrow": "An exhibition", "instagram": "View on Instagram", "translated": "Translated" },
   "credits": { "title": "The people who made this climb", "scenery": "Scenery", "thanks": "With thanks to", "closingVideo": "Play the closing video" },
-  "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map" }
+  "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map" },
+  "loading": {
+    "label": "LOADING",
+    "tipPrefix": "TIP:",
+    "tips": [
+      "Tap any photo to see everyone in it.",
+      "Every person on this trip has their own journey page.",
+      "Switch to gallery mode for a quick scroll through everything.",
+      "Scenery by Alya is tucked in near the end of the climb."
+    ]
+  }
 }

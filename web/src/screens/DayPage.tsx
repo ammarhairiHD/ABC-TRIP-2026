@@ -9,9 +9,11 @@ import { useDayMedia } from "../hooks/useDayMedia";
 import { useDayContent } from "../hooks/useDayContent";
 import { useJourney } from "../hooks/useJourney";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useDelayedVisible } from "../hooks/useDelayedVisible";
 import { Sprite } from "../components/Sprite";
 import { PixelButton } from "../components/PixelButton";
 import { MediaGrid } from "../components/MediaGrid";
+import { LevelTransition } from "../components/LevelTransition";
 import { buildLightboxSlides } from "../lib/mediaSlides";
 import { initials } from "../lib/initials";
 import { cn } from "../lib/utils";
@@ -75,8 +77,19 @@ export function DayPage() {
 
   const slides = useMemo(() => buildLightboxSlides(media), [media]);
 
-  if (dayLoading || mediaLoading || journeyLoading || !dayData || !mediaData || !journeyData) {
-    return <div className="flex min-h-screen items-center justify-center text-ink-dim">{t("common.loading")}</div>;
+  const pageLoading =
+    dayLoading || mediaLoading || journeyLoading || !dayData || !mediaData || !journeyData;
+  // Entering a day page always shows a ~1s level-transition card (DAY n +
+  // altitude + a tip), unlike the generic 300ms-rule LoadingScreen used
+  // elsewhere -- it's a deliberate beat, not just a debounce against slow
+  // loads, so it shows immediately and holds for a minimum, not a maximum.
+  const showTransition = useDelayedVisible(pageLoading, { showAfterMs: 0, minVisibleMs: 1000 });
+  if (pageLoading || showTransition) {
+    const altitudeM =
+      dayData?.day.altitudeM ??
+      journeyData?.days.find((d) => d.id === dayNumber)?.altitudeM ??
+      null;
+    return showTransition ? <LevelTransition dayNumber={dayNumber} altitudeM={altitudeM} /> : null;
   }
 
   const totalDays = journeyData.totals.days;

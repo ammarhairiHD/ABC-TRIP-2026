@@ -26,7 +26,12 @@
   ],
 
   "r2_buckets": [
-    { "binding": "MEDIA", "bucket_name": "himalaya-media" },
+    // remote: true -- wrangler dev proxies this binding to the real,
+    // deployed himalaya-media bucket instead of simulating an empty local
+    // one, so /i18n/* and media URLs show whatever publish.py --upload has
+    // actually put in R2. ORIGINALS and DB stay on local simulation: no
+    // need to touch the private bucket or the real D1 data in dev.
+    { "binding": "MEDIA", "bucket_name": "himalaya-media", "remote": true },
     { "binding": "ORIGINALS", "bucket_name": "himalaya-originals" }
   ]
 }

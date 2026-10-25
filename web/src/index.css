@@ -44,6 +44,27 @@ body {
   }
 }
 
+/* "LOADING" ellipsis on LoadingScreen: steps through 0-3 dots. The global
+   reduced-motion rule below freezes this at its final (full "...") frame. */
+.loading-dots::after {
+  content: "...";
+  display: inline-block;
+  width: 1.2em;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: bottom;
+  animation: loading-dots 1.2s steps(4) infinite;
+}
+
+@keyframes loading-dots {
+  from {
+    width: 0;
+  }
+  to {
+    width: 1.2em;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

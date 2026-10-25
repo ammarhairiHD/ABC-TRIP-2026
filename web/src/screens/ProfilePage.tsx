@@ -8,9 +8,11 @@ import "yet-another-react-lightbox/styles.css";
 import { usePerson } from "../hooks/usePerson";
 import { usePeopleContent } from "../hooks/usePeopleContent";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useDelayedVisible } from "../hooks/useDelayedVisible";
 import { Sprite } from "../components/Sprite";
 import { BadgeIcon } from "../components/BadgeIcon";
 import { MediaGrid } from "../components/MediaGrid";
+import { LoadingScreen } from "../components/LoadingScreen";
 import { cn } from "../lib/utils";
 import { buildLightboxSlides } from "../lib/mediaSlides";
 import type { PersonMediaItem } from "../types/people";
@@ -122,8 +124,10 @@ export function ProfilePage() {
     return groups;
   }, [media]);
 
-  if (isLoading || !data || !personId) {
-    return <div className="flex min-h-screen items-center justify-center text-ink-dim">{t("common.loading")}</div>;
+  const pageLoading = isLoading || !data || !personId;
+  const showLoader = useDelayedVisible(pageLoading);
+  if (pageLoading) {
+    return showLoader ? <LoadingScreen /> : null;
   }
 
   const { person } = data;

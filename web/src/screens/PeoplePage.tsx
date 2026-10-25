@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { usePeople } from "../hooks/usePeople";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useDelayedVisible } from "../hooks/useDelayedVisible";
 import { Sprite } from "../components/Sprite";
+import { LoadingScreen } from "../components/LoadingScreen";
 import { initials } from "../lib/initials";
 import type { PersonListItem } from "../types/people";
 
@@ -43,8 +45,10 @@ export function PeoplePage() {
     };
   }, [data]);
 
-  if (isLoading || !data) {
-    return <div className="flex min-h-screen items-center justify-center text-ink-dim">{t("common.loading")}</div>;
+  const pageLoading = isLoading || !data;
+  const showLoader = useDelayedVisible(pageLoading);
+  if (pageLoading) {
+    return showLoader ? <LoadingScreen /> : null;
   }
 
   return (

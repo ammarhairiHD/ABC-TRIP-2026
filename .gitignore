@@ -7,3 +7,6 @@ dist/
 .DS_Store
 worker-configuration.d.ts
 sprites-raw/
+web/screenshots/
+web/test-results/
+web/playwright-report/

@@ -69,8 +69,8 @@ export function MenuSheet({ open, onClose }: MenuSheetProps) {
   }, [open, onClose]);
 
   const sections = [
-    { label: t("nav.climb"), sub: t("nav.climbDays"), to: "/climb" },
-    { label: t("nav.wayHome"), sub: t("nav.wayHomeDays"), to: "/climb" },
+    { label: t("nav.climb"), sub: t("nav.climbDays"), to: "/climb", scrollToDay: 1 },
+    { label: t("nav.wayHome"), sub: t("nav.wayHomeDays"), to: "/climb", scrollToDay: 6 },
     { label: t("nav.people"), to: "/people" },
     { label: t("nav.howItsBuilt"), to: "/built" },
   ];
@@ -126,7 +126,7 @@ export function MenuSheet({ open, onClose }: MenuSheetProps) {
                   key={s.label}
                   onClick={() => {
                     onClose();
-                    navigate(s.to);
+                    navigate(s.to, s.scrollToDay != null ? { state: { scrollToDay: s.scrollToDay } } : undefined);
                   }}
                   className="flex min-h-11 items-center justify-between border-b-2 border-panel-border py-2 text-left text-sm text-ink"
                 >
@@ -134,6 +134,13 @@ export function MenuSheet({ open, onClose }: MenuSheetProps) {
                   {s.sub && <span className="text-[11px] text-ink-dim">{s.sub}</span>}
                 </button>
               ))}
+              <div
+                aria-disabled="true"
+                className="flex min-h-11 cursor-not-allowed items-center justify-between border-b-2 border-dashed border-panel-border py-2 text-left text-sm text-ink-dim"
+              >
+                {t("nav.scenery")}
+                <span className="text-[11px]">{t("nav.comingSoon")}</span>
+              </div>
             </nav>
           </motion.div>
         </>
