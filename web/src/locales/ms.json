@@ -9,5 +9,5 @@
   "person": { "journey": "Himalaya {{name}}", "summary": "{{photos}} foto · {{videos}} video · {{days}} daripada 11 hari", "first": "Pertama · Hari {{n}}", "last": "Terakhir · Hari {{n}}", "mostWith": "Paling kerap bersama", "together": "Bersama", "addPerson": "Tambah orang", "share": "Kongsi perjalanan ini" },
   "scenery": { "eyebrow": "Sebuah pameran", "instagram": "Lihat di Instagram", "translated": "Diterjemah" },
   "credits": { "title": "Mereka yang menjayakan pendakian ini", "scenery": "Pemandangan", "thanks": "Terima kasih kepada", "closingVideo": "Mainkan video penutup" },
-  "common": { "findSomeone": "Cari seseorang", "back": "Kembali", "loading": "Memuatkan…" }
+  "common": { "findSomeone": "Cari seseorang", "back": "Kembali", "loading": "Memuatkan…", "backToMap": "Kembali ke peta" }
 }

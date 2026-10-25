@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Lightbox from "yet-another-react-lightbox";
@@ -7,10 +7,36 @@ import "yet-another-react-lightbox/styles.css";
 import { useDay } from "../hooks/useDay";
 import { useDayMedia } from "../hooks/useDayMedia";
 import { useDayContent } from "../hooks/useDayContent";
+import { useJourney } from "../hooks/useJourney";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { Sprite } from "../components/Sprite";
+import { PixelButton } from "../components/PixelButton";
 import { MediaThumb } from "../components/MediaThumb";
 import { cn } from "../lib/utils";
+
+/** Prev/next day buttons, shown above and below the grid. Day 1's prev and the
+ * last day's next both lead back to the map, since there's nothing beyond
+ * either end yet (credits come later). */
+function ChapterNav({ dayNumber, totalDays }: { dayNumber: number; totalDays: number }) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const prevDay = dayNumber - 1;
+  const nextDay = dayNumber + 1;
+  const hasPrevDay = prevDay >= 1;
+  const hasNextDay = nextDay <= totalDays;
+
+  return (
+    <div className="flex items-center justify-between gap-2 px-3 py-2">
+      <PixelButton variant="ghost" onClick={() => navigate(hasPrevDay ? `/day/${prevDay}` : "/climb")}>
+        ◀ {hasPrevDay ? t("climb.day", { n: prevDay }) : t("common.backToMap")}
+      </PixelButton>
+      <PixelButton variant="ghost" onClick={() => navigate(hasNextDay ? `/day/${nextDay}` : "/climb")}>
+        {hasNextDay ? t("climb.day", { n: nextDay }) : t("common.backToMap")} ▶
+      </PixelButton>
+    </div>
+  );
+}
 
 function initials(nickname: string): string {
   return nickname
@@ -31,10 +57,15 @@ export function DayPage() {
 
   const { data: dayData, isLoading: dayLoading } = useDay(dayNumber);
   const { data: mediaData, isLoading: mediaLoading } = useDayMedia(dayNumber);
+  const { data: journeyData, isLoading: journeyLoading } = useJourney();
   const content = useDayContent(dayNumber);
 
   const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [dayNumber]);
 
   const allMedia = mediaData?.media ?? [];
   // Faces are already embedded on each media item from /api/days/:n/media,
@@ -69,9 +100,11 @@ export function DayPage() {
     [media]
   );
 
-  if (dayLoading || mediaLoading || !dayData || !mediaData) {
+  if (dayLoading || mediaLoading || journeyLoading || !dayData || !mediaData || !journeyData) {
     return <div className="flex min-h-screen items-center justify-center text-ink-dim">{t("common.loading")}</div>;
   }
+
+  const totalDays = journeyData.totals.days;
 
   return (
     <div className="min-h-screen bg-bg pb-10">
@@ -135,6 +168,8 @@ export function DayPage() {
         })}
       </div>
 
+      <ChapterNav dayNumber={dayNumber} totalDays={totalDays} />
+
       <div className="mt-2 grid grid-cols-3 gap-[3px] px-[3px]">
         {media.map((item, index) => (
           <div key={item.id} className="relative aspect-square [content-visibility:auto]">
@@ -142,6 +177,8 @@ export function DayPage() {
           </div>
         ))}
       </div>
+
+      <ChapterNav dayNumber={dayNumber} totalDays={totalDays} />
 
       <Lightbox
         open={viewerIndex !== null}

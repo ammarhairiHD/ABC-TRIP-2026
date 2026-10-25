@@ -7,6 +7,7 @@ import { useReducedMotion } from "../hooks/useReducedMotion";
 import { Sprite } from "../components/Sprite";
 import { DialogueBox } from "../components/DialogueBox";
 import { cn } from "../lib/utils";
+import { landmarkForDay } from "../config/dayLandmarks";
 import {
   buildNodes,
   dayIndexAtProgress,
@@ -175,19 +176,58 @@ function DayNode({
   onSelect: () => void;
 }) {
   const { t } = useTranslation();
+  const configuredLandmark = landmarkForDay(node.day.id);
+  // Flips back to the plain box if the configured PNG 404s, same probe
+  // technique Sprite.tsx uses for its own fallback.
+  const [landmarkFailed, setLandmarkFailed] = useState(false);
+  const landmark = landmarkFailed ? null : configuredLandmark;
+  const halfColor = node.day.half === "climb" ? "border-accent text-accent-strong" : "border-clay text-clay";
+
+  if (!landmark) {
+    return (
+      <button
+        onClick={onSelect}
+        aria-label={t("climb.day", { n: node.day.id })}
+        className={cn(
+          "absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center",
+          "rounded-sm border-2 font-pixel text-[10px]",
+          halfColor,
+          active ? "bg-panel" : "bg-bg-soft"
+        )}
+        style={{ left: node.x, top: node.y, width: 44, height: 44 }}
+      >
+        {node.day.id}
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={onSelect}
       aria-label={t("climb.day", { n: node.day.id })}
       className={cn(
-        "absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center",
-        "rounded-sm border-2 font-pixel text-[10px]",
-        node.day.half === "climb" ? "border-accent text-accent-strong" : "border-clay text-clay",
-        active ? "bg-panel" : "bg-bg-soft"
+        "absolute -translate-x-1/2 -translate-y-1/2 rounded-sm",
+        active && "ring-2 ring-accent-strong"
       )}
-      style={{ left: node.x, top: node.y, width: 44, height: 44 }}
+      style={{ left: node.x, top: node.y, width: 64, height: 64 }}
     >
-      {node.day.id}
+      <img
+        src={`/sprites/${landmark}.png`}
+        alt=""
+        aria-hidden
+        className="h-full w-full pixelated"
+        style={{ imageRendering: "pixelated" }}
+        onError={() => setLandmarkFailed(true)}
+      />
+      <span
+        className={cn(
+          "absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center",
+          "rounded-sm border-2 bg-bg font-pixel text-[9px]",
+          halfColor
+        )}
+      >
+        {node.day.id}
+      </span>
     </button>
   );
 }

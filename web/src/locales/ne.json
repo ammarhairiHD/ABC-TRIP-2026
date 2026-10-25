@@ -9,5 +9,5 @@
   "person": { "journey": "{{name}}को हिमालय", "summary": "{{photos}} तस्बिर · {{videos}} भिडियो · ११ मध्ये {{days}} दिन", "first": "पहिलो · दिन {{n}}", "last": "अन्तिम · दिन {{n}}", "mostWith": "प्रायः सँगै", "together": "सँगै", "addPerson": "व्यक्ति थप्नुहोस्", "share": "यो यात्रा सेयर गर्नुहोस्" },
   "scenery": { "eyebrow": "एक प्रदर्शनी", "instagram": "इन्स्टाग्राममा हेर्नुहोस्", "translated": "अनुवादित" },
   "credits": { "title": "यो आरोहण सम्भव बनाउनेहरू", "scenery": "दृश्य", "thanks": "विशेष धन्यवाद", "closingVideo": "अन्तिम भिडियो हेर्नुहोस्" },
-  "common": { "findSomeone": "कसैलाई खोज्नुहोस्", "back": "पछाडि", "loading": "लोड हुँदैछ…" }
+  "common": { "findSomeone": "कसैलाई खोज्नुहोस्", "back": "पछाडि", "loading": "लोड हुँदैछ…", "backToMap": "नक्सामा फर्कनुहोस्" }
 }

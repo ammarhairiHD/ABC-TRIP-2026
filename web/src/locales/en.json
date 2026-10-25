@@ -8,5 +8,5 @@
   "person": { "journey": "{{name}}'s Himalaya", "summary": "{{photos}} photos · {{videos}} videos · {{days}} of 11 days", "first": "First · Day {{n}}", "last": "Last · Day {{n}}", "mostWith": "Most often with", "together": "Together with", "addPerson": "Add person", "share": "Share this journey" },
   "scenery": { "eyebrow": "An exhibition", "instagram": "View on Instagram", "translated": "Translated" },
   "credits": { "title": "The people who made this climb", "scenery": "Scenery", "thanks": "With thanks to", "closingVideo": "Play the closing video" },
-  "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…" }
+  "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map" }
 }
