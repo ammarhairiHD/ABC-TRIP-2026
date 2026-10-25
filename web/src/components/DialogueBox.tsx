@@ -16,9 +16,18 @@ interface DialogueBoxProps {
   story?: string;
   loading?: boolean;
   error?: boolean;
+  hasPrev: boolean;
+  hasNext: boolean;
+  onPrev: () => void;
+  onNext: () => void;
 }
 
-/** Retro game dialogue window, bottom sheet on mobile. */
+/** Retro game dialogue window, bottom sheet on mobile. The Prev/Next row at
+ * the bottom only scrolls the page to the neighboring day node -- it never
+ * sets the active day itself. The map's own scroll-progress listener is
+ * what notices the new position and opens that day's dialogue, same as a
+ * manual scroll or the menu's jump links -- scroll position stays the one
+ * source of truth for where the sprite (and this dialogue) is. */
 export function DialogueBox({
   open,
   onClose,
@@ -29,6 +38,10 @@ export function DialogueBox({
   story,
   loading,
   error,
+  hasPrev,
+  hasNext,
+  onPrev,
+  onNext,
 }: DialogueBoxProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -91,6 +104,15 @@ export function DialogueBox({
                   )}
                 </>
               )}
+            </div>
+
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <PixelButton variant="ghost" disabled={!hasPrev} onClick={onPrev} aria-label="Previous day">
+                ◀ {t("common.prev")}
+              </PixelButton>
+              <PixelButton variant="ghost" disabled={!hasNext} onClick={onNext} aria-label="Next day">
+                {t("common.next")} ▶
+              </PixelButton>
             </div>
           </motion.div>
         </>

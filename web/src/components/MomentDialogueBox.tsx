@@ -30,11 +30,21 @@ interface MomentDialogueBoxProps {
   photoCount: number;
   loading?: boolean;
   error?: boolean;
+  hasPrev: boolean;
+  hasNext: boolean;
+  onPrev: () => void;
+  onNext: () => void;
 }
 
 /** Retro game dialogue window for a moment node on /climb -- same shell as
  * DialogueBox (day story), but for a moment: hero media, who's in it, and a
- * link into the gallery instead of a day's intro text. */
+ * link into the gallery instead of a day's intro text. The Prev/Next row at
+ * the bottom only scrolls the page to the neighboring moment node -- it
+ * never sets the active moment itself. The map's own scroll-progress
+ * listener is what notices the new position and opens that moment's
+ * dialogue, same as a manual scroll or the menu's jump links -- scroll
+ * position stays the one source of truth for where the sprite (and this
+ * dialogue) is. */
 export function MomentDialogueBox({
   open,
   onClose,
@@ -49,6 +59,10 @@ export function MomentDialogueBox({
   photoCount,
   loading,
   error,
+  hasPrev,
+  hasNext,
+  onPrev,
+  onNext,
 }: MomentDialogueBoxProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -172,6 +186,15 @@ export function MomentDialogueBox({
                 {t("climb.seePhotos", { count: photoCount })}
               </PixelButton>
             )}
+
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <PixelButton variant="ghost" disabled={!hasPrev} onClick={onPrev} aria-label="Previous moment">
+                ◀ {t("common.prev")}
+              </PixelButton>
+              <PixelButton variant="ghost" disabled={!hasNext} onClick={onNext} aria-label="Next moment">
+                {t("common.next")} ▶
+              </PixelButton>
+            </div>
           </motion.div>
         </>
       )}

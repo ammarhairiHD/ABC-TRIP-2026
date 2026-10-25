@@ -15,6 +15,7 @@ import {
   buildDayNodes,
   nodeIndexAtProgress,
   positionAlongPath,
+  scrollYForProgress,
   totalHeight,
   CANVAS_WIDTH,
   type DayMapNode,
@@ -61,9 +62,7 @@ export function DaysMap() {
     if (scrollHandledRef.current === location.key) return;
     scrollHandledRef.current = location.key;
     openDay(scrollToDay);
-    document
-      .getElementById(`day-node-${scrollToDay}`)
-      ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+    scrollToDayNode(scrollToDay);
     navigate(location.pathname, { replace: true, state: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollToDay, pageLoading, location.key]);
@@ -104,6 +103,30 @@ export function DaysMap() {
   const activeContent = useDayContent(dialogueOpen ? activeDay : null);
   const activeNode = nodes.find((n): n is DayMapNode => n.kind === "day" && n.day.id === activeDay);
   const showLoader = useDelayedVisible(pageLoading);
+
+  // Dialogue box Prev/Next: scrolls the page to the neighboring day node and
+  // stops there -- it never sets activeDay directly. The scroll-progress
+  // listener above is what notices the new position and opens its dialogue,
+  // same path a manual scroll or a menu jump link takes.
+  const dayNodes = useMemo(() => nodes.filter((n): n is DayMapNode => n.kind === "day"), [nodes]);
+  const activeDayIndex = dayNodes.findIndex((n) => n.day.id === activeDay);
+  const hasPrevDay = activeDayIndex > 0;
+  const hasNextDay = activeDayIndex >= 0 && activeDayIndex < dayNodes.length - 1;
+
+  function scrollToDayNode(dayId: number) {
+    const index = nodes.findIndex((n) => n.kind === "day" && n.day.id === dayId);
+    if (index < 0 || !containerRef.current || nodes.length < 2) return;
+    const top = scrollYForProgress(containerRef.current, index / (nodes.length - 1));
+    window.scrollTo({ top, behavior: reducedMotion ? "auto" : "smooth" });
+  }
+
+  function handlePrevDay() {
+    if (hasPrevDay) scrollToDayNode(dayNodes[activeDayIndex - 1]!.day.id);
+  }
+
+  function handleNextDay() {
+    if (hasNextDay) scrollToDayNode(dayNodes[activeDayIndex + 1]!.day.id);
+  }
 
   // In reduced motion, the character snaps to whichever day node is active
   // instead of interpolating smoothly along the path as the user scrolls.
@@ -191,6 +214,10 @@ export function DaysMap() {
         story={activeContent.data?.story}
         loading={activeContent.isLoading}
         error={activeContent.isError}
+        hasPrev={hasPrevDay}
+        hasNext={hasNextDay}
+        onPrev={handlePrevDay}
+        onNext={handleNextDay}
       />
 
       {showLoader && <LoadingScreen />}

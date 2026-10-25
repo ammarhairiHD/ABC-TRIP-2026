@@ -16,6 +16,7 @@ export function PixelButton({ variant = "primary", className, children, ...props
       className={cn(
         "min-h-11 px-6 py-3 font-pixel text-xs uppercase tracking-wide border-2 transition-transform",
         "active:translate-x-[3px] active:translate-y-[3px] active:shadow-none",
+        "disabled:pointer-events-none disabled:opacity-40",
         variant === "primary" &&
           "bg-accent text-bg border-bg shadow-[3px_3px_0_0_var(--color-bg)]",
         variant === "ghost" &&

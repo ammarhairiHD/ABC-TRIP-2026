@@ -27,7 +27,7 @@
   "built": { "title": "How it's built", "body": "A look at how this site was put together is coming soon." },
   "scenery": { "eyebrow": "An exhibition", "instagram": "View on Instagram", "translated": "Translated" },
   "credits": { "title": "The people who made this climb", "scenery": "Scenery", "thanks": "With thanks to", "closingVideo": "Play the closing video" },
-  "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map" },
+  "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map", "prev": "Prev", "next": "Next" },
   "loading": {
     "label": "LOADING",
     "tipPrefix": "TIP:",

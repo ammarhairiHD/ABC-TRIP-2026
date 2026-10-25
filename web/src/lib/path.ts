@@ -136,3 +136,28 @@ export function nodeIndexAtProgress<T>(nodes: T[], progress: number): number {
   const clamped = Math.min(1, Math.max(0, progress));
   return Math.round(clamped * (nodes.length - 1));
 }
+
+/**
+ * The window.scrollY that puts the map's scroll progress at exactly
+ * `progress` (0-1) -- i.e. the inverse of what the map's own
+ * `useScroll({ target: containerRef, offset: ["start start", "end end"] })`
+ * computes, so jumping here lands on precisely the node
+ * `nodeIndexAtProgress` would resolve for that progress.
+ *
+ * Deliberately not `element.scrollIntoView()`: that aligns the element
+ * within the *viewport* (e.g. "center" needs scrollY = elementY -
+ * viewportHeight/2, which goes negative -- and gets silently clamped to 0
+ * -- for any node less than half a screen from the top). This container's
+ * progress scale instead runs over `containerHeight - viewportHeight`, not
+ * `containerHeight`, so a node's raw y position and its progress fraction
+ * aren't the same scale either way. Computing the target scrollY directly
+ * from the same offset formula the map's useScroll uses keeps the two in
+ * exact agreement regardless of where the node sits or how tall the
+ * viewport is.
+ */
+export function scrollYForProgress(container: HTMLElement, progress: number): number {
+  const rect = container.getBoundingClientRect();
+  const containerTop = rect.top + window.scrollY;
+  const scrollableRange = rect.height - window.innerHeight;
+  return containerTop + progress * scrollableRange;
+}

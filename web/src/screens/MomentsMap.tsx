@@ -17,6 +17,7 @@ import {
   buildMomentNodes,
   nodeIndexAtProgress,
   positionAlongPath,
+  scrollYForProgress,
   totalHeight,
   CANVAS_WIDTH,
   type MomentMapNode,
@@ -60,9 +61,7 @@ export function MomentsMap() {
     );
     if (node) {
       openNode(node);
-      document
-        .getElementById(`moment-node-${node.moment.id}`)
-        ?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "center" });
+      scrollToMomentNode(node.moment.id);
     }
     navigate(location.pathname, { replace: true, state: null });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -109,6 +108,32 @@ export function MomentsMap() {
   // instead of interpolating smoothly along the path as the user scrolls.
   const snappedNode = activeNode ?? nodes[0];
   const activeMomentText = activeNode ? momentsContent.data?.moment[activeNode.moment.id] : undefined;
+
+  // Dialogue box Prev/Next: scrolls the page to the neighboring moment node
+  // and stops there -- it never sets activeNode directly. The
+  // scroll-progress listener above is what notices the new position and
+  // opens its dialogue, same path a manual scroll or a menu jump link takes.
+  const momentNodes = useMemo(() => nodes.filter((n): n is MomentMapNode => n.kind === "moment"), [nodes]);
+  const activeMomentIndex = activeNode
+    ? momentNodes.findIndex((n) => n.moment.id === activeNode.moment.id)
+    : -1;
+  const hasPrevMoment = activeMomentIndex > 0;
+  const hasNextMoment = activeMomentIndex >= 0 && activeMomentIndex < momentNodes.length - 1;
+
+  function scrollToMomentNode(id: string) {
+    const index = nodes.findIndex((n) => n.kind === "moment" && n.moment.id === id);
+    if (index < 0 || !containerRef.current || nodes.length < 2) return;
+    const top = scrollYForProgress(containerRef.current, index / (nodes.length - 1));
+    window.scrollTo({ top, behavior: reducedMotion ? "auto" : "smooth" });
+  }
+
+  function handlePrevMoment() {
+    if (hasPrevMoment) scrollToMomentNode(momentNodes[activeMomentIndex - 1]!.moment.id);
+  }
+
+  function handleNextMoment() {
+    if (hasNextMoment) scrollToMomentNode(momentNodes[activeMomentIndex + 1]!.moment.id);
+  }
 
   return (
     <div className="bg-bg">
@@ -188,6 +213,10 @@ export function MomentsMap() {
           photoCount={activeMomentDetail.data?.media.length ?? 0}
           loading={momentsContent.isLoading || activeMomentDetail.isLoading}
           error={momentsContent.isError || activeMomentDetail.isError}
+          hasPrev={hasPrevMoment}
+          hasNext={hasNextMoment}
+          onPrev={handlePrevMoment}
+          onNext={handleNextMoment}
         />
       )}
 

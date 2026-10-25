@@ -11,5 +11,5 @@
   "built": { "title": "Bagaimana laman ini dibina", "body": "Penjelasan tentang bagaimana laman ini dibina akan datang tidak lama lagi." },
   "scenery": { "eyebrow": "Sebuah pameran", "instagram": "Lihat di Instagram", "translated": "Diterjemah" },
   "credits": { "title": "Mereka yang menjayakan pendakian ini", "scenery": "Pemandangan", "thanks": "Terima kasih kepada", "closingVideo": "Mainkan video penutup" },
-  "common": { "findSomeone": "Cari seseorang", "back": "Kembali", "loading": "Memuatkan…", "backToMap": "Kembali ke peta" }
+  "common": { "findSomeone": "Cari seseorang", "back": "Kembali", "loading": "Memuatkan…", "backToMap": "Kembali ke peta", "prev": "Sebelum", "next": "Seterus" }
 }
