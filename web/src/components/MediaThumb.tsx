@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { decode } from "blurhash";
-import type { DayMediaItem } from "../types/journey";
+import type { MediaLike } from "../lib/mediaSlides";
 import { cn } from "../lib/utils";
 
 const BLURHASH_SIZE = 8;
@@ -32,7 +32,7 @@ function useBlurhashDataUrl(hash: string | null): string | null {
  * grid scrolling smoothly. This button fills that wrapper exactly, so it
  * never needs its own size.
  */
-export function MediaThumb({ media, onOpen }: { media: DayMediaItem; onOpen: () => void }) {
+export function MediaThumb({ media, onOpen }: { media: MediaLike; onOpen: () => void }) {
   const [loaded, setLoaded] = useState(false);
   const blurUrl = useBlurhashDataUrl(media.blurhash);
 

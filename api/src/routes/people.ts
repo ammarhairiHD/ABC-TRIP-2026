@@ -12,6 +12,7 @@ const personIdSchema = z.string().min(1).regex(/^[a-z0-9-]+$/);
 interface PersonListRow {
   id: string;
   nickname: string;
+  role: string;
   media_count: number;
   first_media_id: string | null;
   first_media_type: MediaType | null;
@@ -26,7 +27,7 @@ peopleRouter.get("/people", async (_req, res) => {
   // (first_media_id, person) pair -- e.g. a person detected in several frames
   // of the same video -- back down to one avatar row per person.
   const { results } = await env.DB.prepare(
-    `SELECT p.id, p.nickname, p.media_count, p.first_media_id, m.type AS first_media_type,
+    `SELECT p.id, p.nickname, p.role, p.media_count, p.first_media_id, m.type AS first_media_type,
             MIN(mf.x) AS face_x, MIN(mf.y) AS face_y, MIN(mf.w) AS face_w, MIN(mf.h) AS face_h
        FROM people p
        LEFT JOIN media m ON m.id = p.first_media_id AND m.hidden = 0
@@ -51,6 +52,7 @@ peopleRouter.get("/people", async (_req, res) => {
     return {
       id: row.id,
       nickname: row.nickname,
+      role: row.role,
       mediaCount: row.media_count,
       avatar,
     };

@@ -11,7 +11,9 @@ import { useJourney } from "../hooks/useJourney";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { Sprite } from "../components/Sprite";
 import { PixelButton } from "../components/PixelButton";
-import { MediaThumb } from "../components/MediaThumb";
+import { MediaGrid } from "../components/MediaGrid";
+import { buildLightboxSlides } from "../lib/mediaSlides";
+import { initials } from "../lib/initials";
 import { cn } from "../lib/utils";
 
 /** Prev/next day buttons, shown above and below the grid. Day 1's prev and the
@@ -36,16 +38,6 @@ function ChapterNav({ dayNumber, totalDays }: { dayNumber: number; totalDays: nu
       </PixelButton>
     </div>
   );
-}
-
-function initials(nickname: string): string {
-  return nickname
-    .split(" ")
-    .filter(Boolean)
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 }
 
 export function DayPage() {
@@ -81,24 +73,7 @@ export function DayPage() {
   // Ammar is shown once, as "my sprite" in front; he's not a filterable teammate.
   const teammates = (dayData?.people ?? []).filter((person) => person.id !== "ammar");
 
-  const slides = useMemo(
-    () =>
-      media.map((item) =>
-        item.type === "video"
-          ? {
-              type: "video" as const,
-              width: item.width,
-              height: item.height,
-              poster: item.posterUrl ?? undefined,
-              sources: item.videoUrl ? [{ src: item.videoUrl, type: "video/mp4" }] : [],
-              muted: true,
-              controls: true,
-              playsInline: true,
-            }
-          : { src: item.webUrl ?? item.thumbUrl, width: item.width, height: item.height }
-      ),
-    [media]
-  );
+  const slides = useMemo(() => buildLightboxSlides(media), [media]);
 
   if (dayLoading || mediaLoading || journeyLoading || !dayData || !mediaData || !journeyData) {
     return <div className="flex min-h-screen items-center justify-center text-ink-dim">{t("common.loading")}</div>;
@@ -122,7 +97,12 @@ export function DayPage() {
             <span className="ml-2 text-ink-dim">{dayData.day.altitudeM.toLocaleString()} m</span>
           )}
         </div>
-        <span className="min-w-11" aria-hidden />
+        <button
+          onClick={() => navigate("/people")}
+          className="flex min-h-11 items-center px-2 font-pixel text-[10px] text-ink-dim"
+        >
+          {t("nav.people")}
+        </button>
       </header>
 
       <div className="mx-3 border-2 border-panel-border bg-panel p-5">
@@ -170,12 +150,8 @@ export function DayPage() {
 
       <ChapterNav dayNumber={dayNumber} totalDays={totalDays} />
 
-      <div className="mt-2 grid grid-cols-3 gap-[3px] px-[3px]">
-        {media.map((item, index) => (
-          <div key={item.id} className="relative aspect-square [content-visibility:auto]">
-            <MediaThumb media={item} onOpen={() => setViewerIndex(index)} />
-          </div>
-        ))}
+      <div className="mt-2">
+        <MediaGrid media={media} onOpen={setViewerIndex} />
       </div>
 
       <ChapterNav dayNumber={dayNumber} totalDays={totalDays} />
