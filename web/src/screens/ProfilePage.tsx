@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion } from "motion/react";
 import Lightbox from "yet-another-react-lightbox";
 import Video from "yet-another-react-lightbox/plugins/video";
 import "yet-another-react-lightbox/styles.css";
@@ -8,7 +9,9 @@ import { usePerson } from "../hooks/usePerson";
 import { usePeopleContent } from "../hooks/usePeopleContent";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { Sprite } from "../components/Sprite";
+import { BadgeIcon } from "../components/BadgeIcon";
 import { MediaGrid } from "../components/MediaGrid";
+import { cn } from "../lib/utils";
 import { buildLightboxSlides } from "../lib/mediaSlides";
 import type { PersonMediaItem } from "../types/people";
 
@@ -29,6 +32,61 @@ function StatCard({ value, label, onClick }: { value: string; label: string; onC
   );
 }
 
+function BadgeDialog({
+  open,
+  onClose,
+  name,
+  description,
+}: {
+  open: boolean;
+  onClose: () => void;
+  name: string;
+  description: string;
+}) {
+  const reducedMotion = useReducedMotion();
+  return (
+    <AnimatePresence>
+      {open && (
+        <>
+          <motion.div
+            className="fixed inset-0 z-40 bg-black/50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
+          />
+          <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label={name}
+            className={cn(
+              "fixed inset-x-0 bottom-0 z-50 mx-auto max-w-md",
+              "border-2 border-panel-border bg-panel p-5 pb-7",
+              "shadow-[0_-4px_0_0_var(--color-bg)]"
+            )}
+            initial={reducedMotion ? { opacity: 0 } : { y: "100%" }}
+            animate={reducedMotion ? { opacity: 1 } : { y: 0 }}
+            exit={reducedMotion ? { opacity: 0 } : { y: "100%" }}
+            transition={{ duration: reducedMotion ? 0.15 : 0.25, ease: "easeOut" }}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <h2 className="font-pixel text-sm leading-relaxed text-ink">{name}</h2>
+              <button
+                onClick={onClose}
+                aria-label="Close"
+                className="min-h-11 min-w-11 font-pixel text-ink-dim hover:text-ink"
+              >
+                X
+              </button>
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-ink-dim">{description}</p>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 export function ProfilePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -39,6 +97,7 @@ export function ProfilePage() {
   const { data, isLoading } = usePerson(personId);
   const content = usePeopleContent();
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const [activeBadge, setActiveBadge] = useState<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -69,6 +128,7 @@ export function ProfilePage() {
 
   const { person } = data;
   const trait = content.data?.person[personId]?.trait;
+  const badges = content.data?.person[personId]?.badges ?? [];
   const trailBuddy = person.mostWith[0];
 
   return (
@@ -87,6 +147,24 @@ export function ProfilePage() {
       <div className="flex flex-col items-center gap-3 px-6 pb-2 text-center">
         <Sprite fileName={`${personId}.png`} frameCount={2} initials={person.nickname.slice(0, 2).toUpperCase()} loop="idle" animate={!reducedMotion} scale={5} />
         <h1 className="font-pixel text-base leading-relaxed text-ink">{t("person.journey", { name: person.nickname })}</h1>
+
+        {badges.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {badges.map((badgeId) => {
+              const name = t(`badge.${badgeId}.name`);
+              return (
+                <button
+                  key={badgeId}
+                  onClick={() => setActiveBadge(badgeId)}
+                  className="flex min-h-11 flex-col items-center gap-1 px-1"
+                >
+                  <BadgeIcon badgeId={badgeId} label={name} />
+                  <span className="text-[10px] text-ink-dim">{name}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {trait && (
@@ -97,7 +175,6 @@ export function ProfilePage() {
 
       <div className="mt-4 flex gap-2 px-3">
         <StatCard value={String(person.mediaCount)} label={t("person.photos")} />
-        <StatCard value={String(person.daysPresent.length)} label={t("person.daysOnTrail")} />
         {trailBuddy && (
           <StatCard
             value={trailBuddy.nickname}
@@ -120,6 +197,13 @@ export function ProfilePage() {
         index={viewerIndex ?? 0}
         slides={slides}
         plugins={[Video]}
+      />
+
+      <BadgeDialog
+        open={activeBadge !== null}
+        onClose={() => setActiveBadge(null)}
+        name={activeBadge ? t(`badge.${activeBadge}.name`) : ""}
+        description={activeBadge ? t(`badge.${activeBadge}.description`) : ""}
       />
     </div>
   );

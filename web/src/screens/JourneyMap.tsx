@@ -1,7 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useMotionValueEvent, useScroll, useTransform, motion } from "motion/react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import { useJourney } from "../hooks/useJourney";
 import { useDayContent } from "../hooks/useDayContent";
 import { useReducedMotion } from "../hooks/useReducedMotion";
@@ -21,7 +20,6 @@ import {
 
 export function JourneyMap() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { data, isLoading } = useJourney();
   const reducedMotion = useReducedMotion();
   const [activeDay, setActiveDay] = useState<number | null>(null);
@@ -77,13 +75,6 @@ export function JourneyMap() {
 
   return (
     <div className="bg-bg">
-      <button
-        onClick={() => navigate("/people")}
-        className="fixed right-2 top-2 z-30 min-h-11 border-2 border-panel-border bg-bg-soft px-3 font-pixel text-[10px] text-ink-dim"
-      >
-        {t("nav.people")}
-      </button>
-
       <div ref={containerRef} className="relative mx-auto" style={{ width: CANVAS_WIDTH, height: totalHeight(nodes) }}>
         <PathSvg nodes={nodes} />
 

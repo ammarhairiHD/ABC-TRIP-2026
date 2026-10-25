@@ -51,5 +51,5 @@ export interface PersonDetailResponse {
 }
 
 export interface PeopleContent {
-  person: Record<string, { trait?: string }>;
+  person: Record<string, { trait?: string; badges?: string[] }>;
 }

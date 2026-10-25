@@ -3,6 +3,7 @@ import { httpServerHandler } from "cloudflare:node";
 import { journeyRouter } from "./routes/journey.js";
 import { daysRouter } from "./routes/days.js";
 import { peopleRouter } from "./routes/people.js";
+import { i18nRouter } from "./routes/i18n.js";
 
 const PORT = 3000;
 
@@ -20,6 +21,8 @@ app.use("/api", peopleRouter);
 app.use("/api", (_req, res) => {
   res.status(404).json({ error: "not found" });
 });
+
+app.use(i18nRouter);
 
 const onError: ErrorRequestHandler = (err, _req, res, _next) => {
   console.error(err);

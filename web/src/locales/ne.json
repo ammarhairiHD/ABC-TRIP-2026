@@ -1,13 +1,14 @@
 {
   "_review": "Draft Nepali. Must be checked by a Nepali speaker (e.g. Raj) before launch.",
-  "nav": { "climb": "आरोहण", "wayHome": "घर फर्काइ", "people": "मान्छेहरू", "scenery": "आल्याको दृश्य", "gallery": "ग्यालरी", "menu": "मेनु", "language": "भाषा" },
+  "nav": { "climb": "आरोहण", "climbDays": "दिन १–५", "wayHome": "घर फर्काइ", "wayHomeDays": "दिन ६–११", "people": "मान्छेहरू", "howItsBuilt": "यो साइट कसरी बनाइयो", "scenery": "आल्याको दृश्य", "gallery": "ग्यालरी", "menu": "मेनु", "language": "भाषा", "comingSoonNote": "बहासा मलायु र नेपाली ठीकसँग पढिने बनाउन म अझै काम गरिरहेको छु। चाँडै आउँदैछ, इन्शाअल्लाह।" },
   "opening": { "eyebrow": "अन्नपूर्ण आधार शिविर · नेपाल", "dates": "९–१९ अक्टोबर २०२६", "ofUs": "जना हामी", "days": "दिन", "photos": "तस्बिर", "highest": "सबैभन्दा उच्च बिन्दु", "begin": "आरोहण सुरु गर्नुहोस्", "browse": "तस्बिरहरू मात्र हेर्नुहोस्" },
   "climb": { "start": "सुरु", "day": "दिन {{n}}", "now": "दिन {{n}} · {{altitude}}", "more": "+ थप {{count}}", "seePhotos": "{{count}} तस्बिर हेर्नुहोस्" },
   "moment": { "challenge": "चुनौती", "highlight": "विशेष क्षण", "funny": "रमाइलो", "farewell": "बिदाइ" },
   "viewer": { "inThisPhoto": "यो तस्बिरमा", "partOfMoment": "यस क्षणको भाग: {{title}}", "download": "मूल फाइल डाउनलोड", "close": "बन्द", "previous": "अघिल्लो", "next": "अर्को" },
   "unlock": { "title": "डाउनलोड कोड हाल्नुहोस्", "body": "कोडका लागि अम्मारलाई सोध्नुहोस्। यो ट्याब बन्द नगरेसम्म खुला रहन्छ।", "code": "कोड", "submit": "खोल्नुहोस् र डाउनलोड गर्नुहोस्", "cancel": "रद्द", "wrong": "कोड मिलेन। फेरि प्रयास गर्नुहोस्।", "unlocked": "यो ट्याबका लागि खुला भयो" },
-  "person": { "journey": "{{name}}को हिमालय", "summary": "{{photos}} तस्बिर · {{videos}} भिडियो · ११ मध्ये {{days}} दिन", "first": "पहिलो · दिन {{n}}", "last": "अन्तिम · दिन {{n}}", "mostWith": "प्रायः सँगै", "together": "सँगै", "addPerson": "व्यक्ति थप्नुहोस्", "share": "यो यात्रा सेयर गर्नुहोस्", "photos": "तस्बिरहरू", "daysOnTrail": "बाटोमा बिताएका दिन", "trailBuddy": "यात्रा साथी" },
+  "person": { "journey": "{{name}}को हिमालय", "summary": "{{photos}} तस्बिर · {{videos}} भिडियो · ११ मध्ये {{days}} दिन", "first": "पहिलो · दिन {{n}}", "last": "अन्तिम · दिन {{n}}", "mostWith": "प्रायः सँगै", "together": "सँगै", "addPerson": "व्यक्ति थप्नुहोस्", "share": "यो यात्रा सेयर गर्नुहोस्", "photos": "तस्बिरहरू", "trailBuddy": "यात्रा साथी" },
   "peoplePage": { "title": "मान्छेहरू", "ourPorters": "हाम्रा पोर्टरहरू" },
+  "built": { "title": "यो साइट कसरी बनाइयो", "body": "यो साइट कसरी बनाइयो भन्ने विवरण चाँडै आउँदैछ।" },
   "scenery": { "eyebrow": "एक प्रदर्शनी", "instagram": "इन्स्टाग्राममा हेर्नुहोस्", "translated": "अनुवादित" },
   "credits": { "title": "यो आरोहण सम्भव बनाउनेहरू", "scenery": "दृश्य", "thanks": "विशेष धन्यवाद", "closingVideo": "अन्तिम भिडियो हेर्नुहोस्" },
   "common": { "findSomeone": "कसैलाई खोज्नुहोस्", "back": "पछाडि", "loading": "लोड हुँदैछ…", "backToMap": "नक्सामा फर्कनुहोस्" }
