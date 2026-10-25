@@ -11,7 +11,7 @@ The website. Shared project rules: `../CLAUDE.md`. Can be a public repo (portfol
 
 ## API
 
-`GET /api/journey` · `/api/days/:n/media` · `/api/moments/:id` · `/api/people` · `/api/people/:slug` · `/api/media?person=` / `?together=a,b` · `/api/scenery` · `/api/media/:id` · `/api/credits` · `POST /api/unlock` → HMAC token (12 h) · `GET /api/download/:id?t=` streams the original from the private bucket.
+`GET /api/journey` · `/api/days/:n` · `/api/days/:n/media` · `/api/moments/:id` · `/api/people` · `/api/people/:slug` · `/api/media?person=` / `?together=a,b` · `/api/scenery` · `/api/media/:id` · `/api/credits` · `POST /api/unlock` → HMAC token (12 h) · `GET /api/download/:id?t=` streams the original from the private bucket.
 
 ## Screens
 

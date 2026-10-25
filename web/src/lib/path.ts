@@ -1,21 +1,25 @@
 import type { JourneyDay } from "../types/journey";
 
-export interface MapNode {
-  day: JourneyDay;
-  x: number;
-  y: number;
-}
+export type MapNode =
+  | { kind: "start"; x: number; y: number }
+  | { kind: "day"; day: JourneyDay; x: number; y: number };
+
+export type DayMapNode = Extract<MapNode, { kind: "day" }>;
 
 export const SECTION_HEIGHT = 220;
 export const CANVAS_WIDTH = 390;
 const PAD_X = 64;
 
 /**
- * Lays out one node per day: y advances monotonically top-to-bottom in
+ * Lays out one node per day, after a leading "start" node (no day, no
+ * dialogue) so the character has somewhere to stand before Day 1 instead of
+ * spawning on top of it. y advances monotonically top-to-bottom in
  * chronological order (so the page scrolls through the trip in order), x
  * leans toward the real altitude for that day (0-1 normalized across the
  * whole trip) so the path's shape traces the climb and descent — Day 5 /
- * ABC juts furthest since it's the altitude peak.
+ * ABC juts furthest since it's the altitude peak. The start node sits
+ * directly above Day 1's x so the first steps down the path are a straight
+ * line onto the trail.
  */
 export function buildNodes(days: JourneyDay[]): MapNode[] {
   const altitudes = days.map((d) => d.altitudeM ?? 0);
@@ -23,14 +27,23 @@ export function buildNodes(days: JourneyDay[]): MapNode[] {
   const max = Math.max(...altitudes);
   const span = max - min || 1;
 
-  return days.map((day, i) => {
+  const dayNodes: MapNode[] = days.map((day, i) => {
     const normalized = ((day.altitudeM ?? min) - min) / span;
     return {
+      kind: "day",
       day,
       x: PAD_X + normalized * (CANVAS_WIDTH - PAD_X * 2),
-      y: i * SECTION_HEIGHT + SECTION_HEIGHT / 2,
+      y: (i + 1) * SECTION_HEIGHT + SECTION_HEIGHT / 2,
     };
   });
+
+  const startNode: MapNode = {
+    kind: "start",
+    x: dayNodes[0]?.x ?? CANVAS_WIDTH / 2,
+    y: SECTION_HEIGHT / 2,
+  };
+
+  return [startNode, ...dayNodes];
 }
 
 export function totalHeight(nodes: MapNode[]): number {

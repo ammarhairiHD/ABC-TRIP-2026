@@ -17,6 +17,47 @@ interface DayRow {
   half: string;
 }
 
+interface DayPersonRow {
+  id: string;
+  nickname: string;
+  media_count: number;
+}
+
+daysRouter.get("/days/:n", async (req, res) => {
+  const parsed = dayParamsSchema.safeParse(req.params);
+  if (!parsed.success) {
+    badRequest(res, "day must be a positive integer");
+    return;
+  }
+  const { n } = parsed.data;
+
+  const day = await env.DB.prepare(`SELECT id, date, altitude_m, half FROM days WHERE id = ?`)
+    .bind(n)
+    .first<DayRow>();
+
+  if (!day) {
+    notFound(res, `day ${n} not found`);
+    return;
+  }
+
+  const { results: people } = await env.DB.prepare(
+    `SELECT p.id, p.nickname, COUNT(DISTINCT mf.media_id) AS media_count
+       FROM media_faces mf
+       JOIN people p ON p.id = mf.person_id AND p.hidden = 0 AND p.id != 'simran'
+       JOIN media m ON m.id = mf.media_id AND m.hidden = 0
+      WHERE m.day_id = ?
+      GROUP BY p.id
+      ORDER BY media_count DESC, p.sort_order`
+  )
+    .bind(n)
+    .all<DayPersonRow>();
+
+  res.json({
+    day: { id: day.id, date: day.date, altitudeM: day.altitude_m, half: day.half },
+    people: people.map((row) => ({ id: row.id, nickname: row.nickname, mediaCount: row.media_count })),
+  });
+});
+
 interface MediaFaceRow {
   id: string;
   type: MediaType;

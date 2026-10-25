@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Opening } from "./screens/Opening";
 import { JourneyMap } from "./screens/JourneyMap";
+import { DayPage } from "./screens/DayPage";
 
 /**
  * /ms and /ne prefixes are wired up per root CLAUDE.md so routing doesn't
@@ -12,10 +13,13 @@ export function App() {
     <Routes>
       <Route path="/" element={<Opening />} />
       <Route path="/climb" element={<JourneyMap />} />
+      <Route path="/day/:n" element={<DayPage />} />
       <Route path="/ms" element={<Opening />} />
       <Route path="/ms/climb" element={<JourneyMap />} />
+      <Route path="/ms/day/:n" element={<DayPage />} />
       <Route path="/ne" element={<Opening />} />
       <Route path="/ne/climb" element={<JourneyMap />} />
+      <Route path="/ne/day/:n" element={<DayPage />} />
     </Routes>
   );
 }

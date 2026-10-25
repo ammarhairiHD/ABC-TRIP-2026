@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.2",
+    "blurhash": "^2.0.5",
     "i18next": "^25.6.2",
     "motion": "^12.23.25",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-i18next": "^16.2.3",
-    "react-router-dom": "^7.9.5"
+    "react-router-dom": "^7.9.5",
+    "yet-another-react-lightbox": "^3.32.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.16",

@@ -1,12 +1,16 @@
 import { AnimatePresence, motion } from "motion/react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { cn } from "../lib/utils";
+import { PixelButton } from "./PixelButton";
 
 interface DialogueBoxProps {
   open: boolean;
   onClose: () => void;
   dayNumber: number;
   altitudeM: number | null;
+  mediaCount?: number;
   title?: string;
   story?: string;
   loading?: boolean;
@@ -19,11 +23,14 @@ export function DialogueBox({
   onClose,
   dayNumber,
   altitudeM,
+  mediaCount,
   title,
   story,
   loading,
   error,
 }: DialogueBoxProps) {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
 
   return (
@@ -76,6 +83,11 @@ export function DialogueBox({
                 <>
                   <h2 className="font-pixel text-sm leading-relaxed text-ink">{title}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-ink-dim">{story}</p>
+                  {mediaCount != null && (
+                    <PixelButton className="mt-4 w-full" onClick={() => navigate(`/day/${dayNumber}`)}>
+                      {t("climb.seePhotos", { count: mediaCount })}
+                    </PixelButton>
+                  )}
                 </>
               )}
             </div>

@@ -13,6 +13,7 @@ import {
   positionAlongPath,
   totalHeight,
   CANVAS_WIDTH,
+  type DayMapNode,
   type MapNode,
 } from "../lib/path";
 
@@ -43,19 +44,25 @@ export function JourneyMap() {
     const index = dayIndexAtProgress(nodes, progress);
     if (index !== lastAutoOpenedDay.current) {
       lastAutoOpenedDay.current = index;
-      setActiveDay(nodes[index]!.day.id);
-      setDialogueOpen(true);
+      const node = nodes[index]!;
+      if (node.kind === "day") {
+        setActiveDay(node.day.id);
+        setDialogueOpen(true);
+      } else {
+        // Scrolled back up to the start node: no story to show here.
+        setDialogueOpen(false);
+      }
     }
   });
 
   function openDay(dayId: number) {
-    lastAutoOpenedDay.current = nodes.findIndex((n) => n.day.id === dayId);
+    lastAutoOpenedDay.current = nodes.findIndex((n) => n.kind === "day" && n.day.id === dayId);
     setActiveDay(dayId);
     setDialogueOpen(true);
   }
 
   const activeContent = useDayContent(dialogueOpen ? activeDay : null);
-  const activeNode = nodes.find((n) => n.day.id === activeDay);
+  const activeNode = nodes.find((n): n is DayMapNode => n.kind === "day" && n.day.id === activeDay);
 
   if (isLoading || !data || nodes.length === 0) {
     return <div className="flex min-h-screen items-center justify-center text-ink-dim">{t("common.loading")}</div>;
@@ -70,14 +77,18 @@ export function JourneyMap() {
       <div ref={containerRef} className="relative mx-auto" style={{ width: CANVAS_WIDTH, height: totalHeight(nodes) }}>
         <PathSvg nodes={nodes} />
 
-        {nodes.map((node) => (
-          <DayNode
-            key={node.day.id}
-            node={node}
-            active={node.day.id === activeDay}
-            onSelect={() => openDay(node.day.id)}
-          />
-        ))}
+        {nodes.map((node) =>
+          node.kind === "day" ? (
+            <DayNode
+              key={node.day.id}
+              node={node}
+              active={node.day.id === activeDay}
+              onSelect={() => openDay(node.day.id)}
+            />
+          ) : (
+            <StartNode key="start" node={node} />
+          )
+        )}
 
         {reducedMotion ? (
           // No walking animation: the idle sprite just appears at each day, no interpolation.
@@ -123,6 +134,7 @@ export function JourneyMap() {
         onClose={() => setDialogueOpen(false)}
         dayNumber={activeDay ?? 1}
         altitudeM={activeNode?.day.altitudeM ?? null}
+        mediaCount={activeNode?.day.mediaCount}
         title={activeContent.data?.title}
         story={activeContent.data?.story}
         loading={activeContent.isLoading}
@@ -158,7 +170,7 @@ function DayNode({
   active,
   onSelect,
 }: {
-  node: MapNode;
+  node: DayMapNode;
   active: boolean;
   onSelect: () => void;
 }) {
@@ -177,5 +189,22 @@ function DayNode({
     >
       {node.day.id}
     </button>
+  );
+}
+
+/** Where the character stands before Day 1 begins: a landmark, not a day — no dialogue, not tappable. */
+function StartNode({ node }: { node: Extract<MapNode, { kind: "start" }> }) {
+  const { t } = useTranslation();
+  return (
+    <div
+      aria-hidden
+      className={cn(
+        "absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center",
+        "rounded-sm border-2 border-dashed border-ink-dim bg-bg-soft font-pixel text-[9px] text-ink-dim"
+      )}
+      style={{ left: node.x, top: node.y, width: 44, height: 44 }}
+    >
+      {t("climb.start")}
+    </div>
   );
 }

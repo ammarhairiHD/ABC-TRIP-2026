@@ -2,7 +2,7 @@
   "_review": "Draft Malay. Ammar to review.",
   "nav": { "climb": "Pendakian", "wayHome": "Perjalanan pulang", "people": "Orang", "scenery": "Pemandangan oleh Alya", "gallery": "Galeri", "menu": "Menu", "language": "Bahasa" },
   "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 Oktober 2026", "ofUs": "orang", "days": "hari", "photos": "foto", "highest": "titik tertinggi", "begin": "Mulakan pendakian", "browse": "Lihat foto sahaja" },
-  "climb": { "day": "Hari {{n}}", "now": "Hari {{n}} · {{altitude}}", "more": "+ {{count}} lagi", "seePhotos": "Lihat {{count}} foto" },
+  "climb": { "start": "Mula", "day": "Hari {{n}}", "now": "Hari {{n}} · {{altitude}}", "more": "+ {{count}} lagi", "seePhotos": "Lihat {{count}} foto" },
   "moment": { "challenge": "Cabaran", "highlight": "Detik indah", "funny": "Lucu", "farewell": "Perpisahan" },
   "viewer": { "inThisPhoto": "Dalam foto ini", "partOfMoment": "Sebahagian daripada: {{title}}", "download": "Muat turun asal", "close": "Tutup", "previous": "Sebelum", "next": "Seterusnya" },
   "unlock": { "title": "Masukkan kod muat turun", "body": "Minta kod daripada Ammar. Ia kekal dibuka sehingga anda menutup tab ini.", "code": "Kod", "submit": "Buka dan muat turun", "cancel": "Batal", "wrong": "Kod tidak betul. Cuba lagi.", "unlocked": "Dibuka untuk tab ini" },

@@ -2,7 +2,7 @@
   "_review": "Draft Nepali. Must be checked by a Nepali speaker (e.g. Raj) before launch.",
   "nav": { "climb": "आरोहण", "wayHome": "घर फर्काइ", "people": "मान्छेहरू", "scenery": "आल्याको दृश्य", "gallery": "ग्यालरी", "menu": "मेनु", "language": "भाषा" },
   "opening": { "eyebrow": "अन्नपूर्ण आधार शिविर · नेपाल", "dates": "९–१९ अक्टोबर २०२६", "ofUs": "जना हामी", "days": "दिन", "photos": "तस्बिर", "highest": "सबैभन्दा उच्च बिन्दु", "begin": "आरोहण सुरु गर्नुहोस्", "browse": "तस्बिरहरू मात्र हेर्नुहोस्" },
-  "climb": { "day": "दिन {{n}}", "now": "दिन {{n}} · {{altitude}}", "more": "+ थप {{count}}", "seePhotos": "{{count}} तस्बिर हेर्नुहोस्" },
+  "climb": { "start": "सुरु", "day": "दिन {{n}}", "now": "दिन {{n}} · {{altitude}}", "more": "+ थप {{count}}", "seePhotos": "{{count}} तस्बिर हेर्नुहोस्" },
   "moment": { "challenge": "चुनौती", "highlight": "विशेष क्षण", "funny": "रमाइलो", "farewell": "बिदाइ" },
   "viewer": { "inThisPhoto": "यो तस्बिरमा", "partOfMoment": "यस क्षणको भाग: {{title}}", "download": "मूल फाइल डाउनलोड", "close": "बन्द", "previous": "अघिल्लो", "next": "अर्को" },
   "unlock": { "title": "डाउनलोड कोड हाल्नुहोस्", "body": "कोडका लागि अम्मारलाई सोध्नुहोस्। यो ट्याब बन्द नगरेसम्म खुला रहन्छ।", "code": "कोड", "submit": "खोल्नुहोस् र डाउनलोड गर्नुहोस्", "cancel": "रद्द", "wrong": "कोड मिलेन। फेरि प्रयास गर्नुहोस्।", "unlocked": "यो ट्याबका लागि खुला भयो" },
