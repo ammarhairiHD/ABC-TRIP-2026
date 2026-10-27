@@ -1,15 +1,97 @@
 {
   "_review": "Draft Malay. Ammar to review.",
-  "nav": { "climb": "Pendakian", "climbDays": "Hari 1–5", "wayHome": "Perjalanan pulang", "wayHomeDays": "Hari 6–11", "story": "Hari demi hari", "people": "Orang", "howItsBuilt": "Bagaimana laman ini dibina", "scenery": "Pemandangan oleh Alya", "gallery": "Galeri", "menu": "Menu", "language": "Bahasa", "comingSoonNote": "Saya masih kerja keras untuk Bahasa Melayu dan Nepal supaya bacaannya betul. Akan datang, insyaAllah." },
-  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 Oktober 2026", "ofUs": "orang", "days": "hari", "photos": "foto", "highest": "titik tertinggi", "begin": "Mulakan pendakian", "browse": "Lihat foto sahaja" },
-  "climb": { "start": "Mula", "day": "Hari {{n}}", "now": "Hari {{n}} · {{altitude}}", "more": "+ {{count}} lagi", "seePhotos": "Lihat {{count}} foto" },
-  "moment": { "challenge": "Cabaran", "highlight": "Detik indah", "funny": "Lucu", "farewell": "Perpisahan", "inThisMoment": "Dalam detik ini", "previous": "Detik sebelum", "next": "Detik seterusnya", "backToClimb": "Kembali ke pendakian" },
-  "viewer": { "inThisPhoto": "Dalam foto ini", "partOfMoment": "Sebahagian daripada: {{title}}", "download": "Muat turun asal", "close": "Tutup", "previous": "Sebelum", "next": "Seterusnya" },
-  "unlock": { "title": "Masukkan kod muat turun", "body": "Minta kod daripada Ammar. Ia kekal dibuka sehingga anda menutup tab ini.", "code": "Kod", "submit": "Buka dan muat turun", "cancel": "Batal", "wrong": "Kod tidak betul. Cuba lagi.", "unlocked": "Dibuka untuk tab ini" },
-  "person": { "journey": "Himalaya {{name}}", "summary": "{{photos}} foto · {{videos}} video · {{days}} daripada 11 hari", "first": "Pertama · Hari {{n}}", "last": "Terakhir · Hari {{n}}", "mostWith": "Paling kerap bersama", "together": "Bersama", "addPerson": "Tambah orang", "share": "Kongsi perjalanan ini", "photos": "Foto", "trailBuddy": "Rakan pendakian" },
+  "nav": {
+    "moments": "Momen",
+    "people": "Orang",
+    "howItsBuilt": "Bagaimana laman ini dibina",
+    "scenery": "Pemandangan oleh Alya",
+    "gallery": "Galeri",
+    "menu": "Menu",
+    "language": "Bahasa",
+    "comingSoonNote": "Saya masih kerja keras untuk Bahasa Melayu dan Nepal supaya bacaannya betul. Akan datang, insyaAllah."
+  },
+  "opening": {
+    "eyebrow": "Annapurna Base Camp · Nepal",
+    "dates": "9–19 Oktober 2026",
+    "madeby": "Diprogram oleh",
+    "ofUs": "orang",
+    "days": "hari",
+    "photos": "foto",
+    "highest": "titik tertinggi",
+    "begin": "Mulakan pendakian",
+    "browse": "Lihat foto sahaja"
+  },
+  "climb": {
+    "start": "Mula",
+    "day": "Hari {{n}}",
+    "now": "Hari {{n}} · {{altitude}}",
+    "more": "+ {{count}} lagi",
+    "seePhotos": "Lihat {{count}} foto"
+  },
+  "moment": {
+    "challenge": "Cabaran",
+    "highlight": "Detik indah",
+    "funny": "Lucu",
+    "farewell": "Perpisahan",
+    "inThisMoment": "Dalam detik ini",
+    "previous": "Detik sebelum",
+    "next": "Detik seterusnya",
+    "backToClimb": "Kembali ke pendakian"
+  },
+  "viewer": {
+    "inThisPhoto": "Dalam foto ini",
+    "partOfMoment": "Sebahagian daripada: {{title}}",
+    "download": "Muat turun asal",
+    "close": "Tutup",
+    "previous": "Sebelum",
+    "next": "Seterusnya"
+  },
+  "unlock": {
+    "title": "Masukkan kod muat turun",
+    "body": "Minta kod daripada Ammar. Ia kekal dibuka sehingga anda menutup tab ini.",
+    "code": "Kod",
+    "submit": "Buka dan muat turun",
+    "cancel": "Batal",
+    "wrong": "Kod tidak betul. Cuba lagi.",
+    "unlocked": "Dibuka untuk tab ini"
+  },
+  "person": {
+    "journey": "Himalaya {{name}}",
+    "summary": "{{photos}} foto · {{videos}} video · {{days}} daripada 11 hari",
+    "first": "Pertama · Hari {{n}}",
+    "last": "Terakhir · Hari {{n}}",
+    "mostWith": "Paling kerap bersama",
+    "together": "Bersama",
+    "addPerson": "Tambah orang",
+    "share": "Kongsi perjalanan ini",
+    "photos": "Foto",
+    "trailBuddy": "Rakan pendakian"
+  },
   "peoplePage": { "title": "Orang", "ourPorters": "Porter kami" },
-  "built": { "title": "Bagaimana laman ini dibina", "body": "Penjelasan tentang bagaimana laman ini dibina akan datang tidak lama lagi." },
-  "scenery": { "eyebrow": "Sebuah pameran", "instagram": "Lihat di Instagram", "translated": "Diterjemah" },
-  "credits": { "title": "Mereka yang menjayakan pendakian ini", "scenery": "Pemandangan", "thanks": "Terima kasih kepada", "closingVideo": "Mainkan video penutup" },
-  "common": { "findSomeone": "Cari seseorang", "back": "Kembali", "loading": "Memuatkan…", "backToMap": "Kembali ke peta", "prev": "Sebelum", "next": "Seterus" }
+  "built": {
+    "title": "Bagaimana laman ini dibina",
+    "body": "Penjelasan tentang bagaimana laman ini dibina akan datang tidak lama lagi."
+  },
+  "scenery": {
+    "eyebrow": "Sebuah pameran",
+    "intro": "Pemandangan sepanjang laluan, melalui mata Alya.",
+    "empty": "Akan datang.",
+    "instagram": "Lihat di Instagram",
+    "translated": "Diterjemah",
+    "counter": "{{current}} / {{total}}"
+  },
+  "credits": {
+    "title": "Mereka yang menjayakan pendakian ini",
+    "scenery": "Pemandangan",
+    "thanks": "Terima kasih kepada",
+    "closingVideo": "Mainkan video penutup"
+  },
+  "common": {
+    "findSomeone": "Cari seseorang",
+    "back": "Kembali",
+    "loading": "Memuatkan…",
+    "backToMap": "Kembali ke peta",
+    "prev": "Sebelum",
+    "next": "Seterus"
+  }
 }

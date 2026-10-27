@@ -15,6 +15,7 @@ import { MediaGrid } from "../components/MediaGrid";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { cn } from "../lib/utils";
 import { buildLightboxSlides } from "../lib/mediaSlides";
+import { instagramUrl } from "../lib/instagram";
 import type { PersonMediaItem } from "../types/people";
 
 function StatCard({ value, label, onClick }: { value: string; label: string; onClick?: () => void }) {
@@ -133,6 +134,7 @@ export function ProfilePage() {
   const { person } = data;
   const trait = content.data?.person[personId]?.trait;
   const badges = content.data?.person[personId]?.badges ?? [];
+  const instagram = content.data?.person[personId]?.links?.instagram;
   const trailBuddy = person.mostWith[0];
 
   return (
@@ -168,6 +170,17 @@ export function ProfilePage() {
               );
             })}
           </div>
+        )}
+
+        {instagram && (
+          <a
+            href={instagramUrl(instagram)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-1 inline-flex min-h-11 items-center border-2 border-panel-border bg-transparent px-6 py-3 font-pixel text-xs uppercase tracking-wide text-ink shadow-[3px_3px_0_0_var(--color-panel-border)] transition-transform active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+          >
+            {t("scenery.instagram")}
+          </a>
         )}
       </div>
 

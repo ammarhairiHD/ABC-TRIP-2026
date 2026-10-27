@@ -1,6 +1,6 @@
 {
-  "nav": { "climb": "The climb", "climbDays": "Days 1–5", "wayHome": "The way home", "wayHomeDays": "Days 6–11", "story": "Day by day", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoon": "Coming soon", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
-  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
+  "nav": { "moments": "Moments", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
+  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "madeby": "Programmed by", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
   "climb": { "start": "Start", "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos" },
   "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell", "inThisMoment": "In this moment", "previous": "Previous moment", "next": "Next moment", "backToClimb": "Back to the climb" },
   "viewer": { "inThisPhoto": "In this photo", "partOfMoment": "Part of the moment: {{title}}", "download": "Download original", "close": "Close", "previous": "Previous", "next": "Next" },
@@ -25,7 +25,7 @@
   },
   "peoplePage": { "title": "People", "hint": "Tap a character to see their journey!", "ourPorters": "Our porters" },
   "built": { "title": "How it's built", "body": "A look at how this site was put together is coming soon." },
-  "scenery": { "eyebrow": "An exhibition", "instagram": "View on Instagram", "translated": "Translated" },
+  "scenery": { "eyebrow": "An exhibition", "intro": "Landscapes from the trail, through Alya's eyes.", "empty": "Coming soon.", "instagram": "View on Instagram", "translated": "Translated", "counter": "{{current}} / {{total}}" },
   "credits": { "title": "The people who made this climb", "scenery": "Scenery", "thanks": "With thanks to", "closingVideo": "Play the closing video" },
   "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map", "prev": "Prev", "next": "Next" },
   "loading": {

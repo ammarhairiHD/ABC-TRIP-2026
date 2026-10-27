@@ -10,7 +10,7 @@ export const i18nRouter = Router();
 // the frontend no longer depends on the media R2 custom domain's CORS
 // allowlist covering whatever origin it's being tested from.
 const LANGS = new Set(["en", "ms", "ne"]);
-const FILE_RE = /^(?:day-\d+|moments|people|site)\.json$/;
+const FILE_RE = /^(?:day-\d+|moments|people|site|scenery)\.json$/;
 
 i18nRouter.get("/i18n/:lang/:file", async (req, res) => {
   const { lang, file } = req.params;

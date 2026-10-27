@@ -38,7 +38,7 @@
     // one, so /i18n/* and media URLs show whatever publish.py --upload has
     // actually put in R2. ORIGINALS and DB stay on local simulation: no
     // need to touch the private bucket or the real D1 data in dev.
-    { "binding": "MEDIA", "bucket_name": "himalaya-media", "remote": true },
+    { "binding": "MEDIA", "bucket_name": "himalaya-media" },
     { "binding": "ORIGINALS", "bucket_name": "himalaya-originals" }
   ]
 }

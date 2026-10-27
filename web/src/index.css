@@ -23,6 +23,13 @@ body,
   height: 100%;
 }
 
+/* TopBar's own rendered height (see components/TopBar.tsx's h-[var(--topbar-h)]).
+   SceneryPage's full-screen slides size themselves against this so they fill
+   exactly the viewport below the sticky top bar, never more. */
+:root {
+  --topbar-h: 48px;
+}
+
 body {
   margin: 0;
   background: var(--color-bg);

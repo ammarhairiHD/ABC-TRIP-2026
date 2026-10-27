@@ -22,15 +22,35 @@ export function Opening() {
       <MountainBackdrop />
 
       <div className="relative z-10 flex flex-col items-center gap-6">
-        <p className="font-pixel text-[10px] text-accent-strong">{t("opening.eyebrow")}</p>
-        <h1 className="font-pixel text-xl leading-loose text-ink">ABC Trip 2026</h1>
+        <p className="font-pixel text-[10px] text-accent-strong">
+          {t("opening.eyebrow")}
+        </p>
+        <h1 className="font-pixel text-xl leading-loose text-ink">
+          ABC Trip 2026 2
+        </h1>
+
+        <p className="flex items-center gap-1.5 font-pixel text-[9px] uppercase tracking-wide text-ink-dim">
+          <span>{t("opening.madeby")}</span>
+          <span className="text-accent-strong">Ammar Hairi</span>
+          <span aria-hidden className="text-clay">♥</span>
+        </p>
         <p className="text-sm text-ink-dim">{t("opening.dates")}</p>
 
         <div className="mt-4 grid grid-cols-3 gap-4">
-          <Stat value={data?.totals.days} label={t("opening.days")} loading={isLoading} />
-          <Stat value={data?.totals.media} label={t("opening.photos")} loading={isLoading} />
           <Stat
-            value={peakAltitude ? `${peakAltitude.toLocaleString()}m` : undefined}
+            value={data?.totals.days}
+            label={t("opening.days")}
+            loading={isLoading}
+          />
+          <Stat
+            value={data?.totals.media}
+            label={t("opening.photos")}
+            loading={isLoading}
+          />
+          <Stat
+            value={
+              peakAltitude ? `${peakAltitude.toLocaleString()}m` : undefined
+            }
             label={t("opening.highest")}
             loading={isLoading}
           />
@@ -55,7 +75,9 @@ function Stat({
 }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="font-pixel text-base text-ink">{loading ? "···" : value ?? "—"}</span>
+      <span className="font-pixel text-base text-ink">
+        {loading ? "···" : (value ?? "—")}
+      </span>
       <span className="text-[11px] text-ink-dim">{label}</span>
     </div>
   );
@@ -70,8 +92,14 @@ function MountainBackdrop() {
       aria-hidden
     >
       <rect width="390" height="600" fill="var(--color-bg)" />
-      <polygon points="0,420 90,260 180,400 260,220 390,380 390,600 0,600" fill="var(--color-bg-soft)" />
-      <polygon points="0,500 120,360 220,460 390,320 390,600 0,600" fill="var(--color-panel)" />
+      <polygon
+        points="0,420 90,260 180,400 260,220 390,380 390,600 0,600"
+        fill="var(--color-bg-soft)"
+      />
+      <polygon
+        points="0,500 120,360 220,460 390,320 390,600 0,600"
+        fill="var(--color-panel)"
+      />
     </svg>
   );
 }

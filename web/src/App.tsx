@@ -7,6 +7,7 @@ import { GalleryPage } from "./screens/GalleryPage";
 import { MomentPage } from "./screens/MomentPage";
 import { PeoplePage } from "./screens/PeoplePage";
 import { ProfilePage } from "./screens/ProfilePage";
+import { SceneryPage } from "./screens/SceneryPage";
 import { HowItsBuilt } from "./screens/HowItsBuilt";
 import { Layout } from "./components/Layout";
 
@@ -68,6 +69,7 @@ export function App() {
         <Route path="/moments/:id" element={<MomentPage />} />
         <Route path="/people" element={<PeoplePage />} />
         <Route path="/people/:id" element={<ProfilePage />} />
+        <Route path="/scenery" element={<SceneryPage />} />
         <Route path="/built" element={<HowItsBuilt />} />
       </Route>
 
@@ -80,6 +82,7 @@ export function App() {
         <Route path="/ms/moments/:id" element={<MomentPage />} />
         <Route path="/ms/people" element={<PeoplePage />} />
         <Route path="/ms/people/:id" element={<ProfilePage />} />
+        <Route path="/ms/scenery" element={<SceneryPage />} />
         <Route path="/ms/built" element={<HowItsBuilt />} />
       </Route>
 
@@ -92,6 +95,7 @@ export function App() {
         <Route path="/ne/moments/:id" element={<MomentPage />} />
         <Route path="/ne/people" element={<PeoplePage />} />
         <Route path="/ne/people/:id" element={<ProfilePage />} />
+        <Route path="/ne/scenery" element={<SceneryPage />} />
         <Route path="/ne/built" element={<HowItsBuilt />} />
       </Route>
     </Routes>

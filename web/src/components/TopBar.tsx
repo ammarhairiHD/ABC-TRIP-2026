@@ -12,9 +12,9 @@ export function TopBar({ onMenuOpen }: TopBarProps) {
   const { t } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between border-b-2 border-panel-border bg-panel px-3">
+    <header className="sticky top-0 z-30 flex h-[var(--topbar-h)] items-center justify-between border-b-2 border-panel-border bg-panel px-3">
       <button
-        onClick={() => navigate("/climb")}
+        onClick={() => navigate("/")}
         className="min-h-11 py-2 font-pixel text-[11px] text-ink"
       >
         ABC Trip 2026

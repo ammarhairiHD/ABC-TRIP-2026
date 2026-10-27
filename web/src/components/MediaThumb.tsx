@@ -6,7 +6,7 @@ import { cn } from "../lib/utils";
 const BLURHASH_SIZE = 8;
 
 /** Tiny decoded-blurhash data URL, shown behind the real thumbnail until it loads. */
-function useBlurhashDataUrl(hash: string | null): string | null {
+export function useBlurhashDataUrl(hash: string | null): string | null {
   return useMemo(() => {
     if (!hash) return null;
     try {
