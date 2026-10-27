@@ -11,7 +11,7 @@
     "dev": "wrangler dev",
     "types": "wrangler types",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,11 @@
   },
   "homepage": "https://github.com/ammarhairiHD/ABC-TRIP-2026#readme",
   "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.4.8",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.5",
     "typescript": "^7.0.2",
+    "vitest": "^5.0.5",
     "wrangler": "^4.152.0"
   },
   "dependencies": {

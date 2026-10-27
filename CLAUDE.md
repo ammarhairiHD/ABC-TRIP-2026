@@ -6,12 +6,12 @@ The website. Shared project rules: `../CLAUDE.md`. Can be a public repo (portfol
 
 - **web/**: React 19 + Vite + TypeScript, Tailwind + shadcn/ui, Motion (scroll story, altitude line), React Router (`/`, `/ms/`, `/ne/` prefixes), TanStack Query, react-i18next + i18next-http-backend: UI strings bundled from `src/locales/{en,ms,ne}.json`, story content loaded per day from `https://abctrip2026-media.ammarhairi.tech/i18n/{lang}/day-{n}.json` (fallback to English), yet-another-react-lightbox + Video plugin, BlurHash. Noto Sans Devanagari for Nepali.
 - **api/**: Express + TypeScript on Cloudflare Workers (`httpServerHandler` from `cloudflare:node`, `nodejs_compat`), Zod. Read-only except unlock. Language-free: returns ids and structure; the app looks words up in i18n.
-- **Cloudflare**: one Worker (`abctrip2026.ammarhairi.tech`, not deployed yet) serves the React build + `/api/*`; D1 database `himalaya` (id `ccdacd9a-0a6f-4a39-b20f-c2228044a1a3`, APAC; migration `0001_init.sql` applied); R2 `himalaya-media` (public at `abctrip2026-media.ammarhairi.tech`) and `himalaya-originals` (private, no domain). Secrets: `DOWNLOAD_CODE_HASH`, `TOKEN_SECRET`. `wrangler.jsonc` binds `DB`, `MEDIA`, `ORIGINALS`.
-- Schema: `api/migrations/0001_init.sql` is the contract with `abc-face-tools`.
+- **Cloudflare**: one Worker (`abctrip2026.ammarhairi.tech`, not deployed yet) serves the React build + `/api/*`; D1 database `himalaya` (id `ccdacd9a-0a6f-4a39-b20f-c2228044a1a3`, APAC; migrations `0001_init.sql`–`0003_scenery_captions.sql` applied); R2 `himalaya-media` (public at `abctrip2026-media.ammarhairi.tech`) and `himalaya-originals` (private, no domain). Secrets: `EDITOR_CODE_HASH` (scenery captions), `DOWNLOAD_CODE_HASH` (not yet generated), `TOKEN_SECRET`. `wrangler.jsonc` binds `DB`, `MEDIA`, `ORIGINALS`, `UNLOCK_LIMITER` (rate limit on `/api/unlock`).
+- Schema: `api/migrations/0001_init.sql` is the contract with `abc-face-tools`. `scenery_captions` (added in `0003`) is the one table `publish.py`'s `import.sql` never touches -- D1 is the sole source of truth for Alya's captions, written only through the site's own editor.
 
 ## API
 
-`GET /api/journey` · `/api/days/:n` · `/api/days/:n/media` · `/api/moments/:id` · `/api/people` · `/api/people/:slug` · `/api/media?person=` / `?together=a,b` · `/api/scenery` · `/api/media/:id` · `/api/credits` · `POST /api/unlock` → HMAC token (12 h) · `GET /api/download/:id?t=` streams the original from the private bucket.
+`GET /api/journey` · `/api/days/:n` · `/api/days/:n/media` · `/api/moments/:id` · `/api/people` · `/api/people/:slug` · `/api/media?person=` / `?together=a,b` · `/api/scenery` (includes each item's caption) · `/api/media/:id` · `/api/credits` · `POST /api/unlock {code, scope}` → HMAC-signed token, scoped and TTL'd per `scope` (`scenery-editor`: 6 h; `download` will reuse the same endpoint later) · `PUT /api/scenery/:id/caption` (requires a `scenery-editor` token) · `GET /api/download/:id?t=` streams the original from the private bucket.
 
 ## Screens
 

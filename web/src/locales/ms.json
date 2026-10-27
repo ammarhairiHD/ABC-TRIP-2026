@@ -26,7 +26,8 @@
     "day": "Hari {{n}}",
     "now": "Hari {{n}} · {{altitude}}",
     "more": "+ {{count}} lagi",
-    "seePhotos": "Lihat {{count}} foto"
+    "seePhotos": "Lihat {{count}} foto",
+    "photosHint": "↓ gambar"
   },
   "moment": {
     "challenge": "Cabaran",

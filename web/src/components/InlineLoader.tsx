@@ -2,9 +2,9 @@ import { useTranslation } from "react-i18next";
 import { Sprite } from "./Sprite";
 
 /**
- * Small inline loader for story text loading inside a bottom sheet (e.g.
- * DialogueBox) -- a mini walking sprite and animated "...", not the full
- * LoadingScreen overlay.
+ * Small inline loader for story text loading inside a panel (e.g.
+ * MomentDialogueBox) -- a mini walking sprite and animated "...", not the
+ * full LoadingScreen overlay.
  */
 export function InlineLoader() {
   const { t } = useTranslation();

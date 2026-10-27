@@ -16,7 +16,7 @@ import { InlineLoader } from "../components/InlineLoader";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { buildLightboxSlides } from "../lib/mediaSlides";
 import { initials } from "../lib/initials";
-import { buildMomentNodes, type MomentMapNode } from "../lib/path";
+import { flattenMoments } from "../lib/moments";
 
 const MAX_GRID_ITEMS = 4;
 
@@ -61,19 +61,11 @@ export function MomentPage() {
 
   // Same flattened order the /climb path itself walks, so prev/next here
   // matches scrolling through moment nodes there.
-  const momentOrder = useMemo(
-    () =>
-      journeyData
-        ? buildMomentNodes(journeyData.days).filter((n): n is MomentMapNode => n.kind === "moment")
-        : [],
-    [journeyData]
-  );
-  const currentIndex = momentOrder.findIndex((n) => n.moment.id === momentId);
-  const prevId = currentIndex > 0 ? momentOrder[currentIndex - 1]!.moment.id : null;
+  const momentOrder = useMemo(() => (journeyData ? flattenMoments(journeyData.days) : []), [journeyData]);
+  const currentIndex = momentOrder.findIndex((m) => m.id === momentId);
+  const prevId = currentIndex > 0 ? momentOrder[currentIndex - 1]!.id : null;
   const nextId =
-    currentIndex >= 0 && currentIndex < momentOrder.length - 1
-      ? momentOrder[currentIndex + 1]!.moment.id
-      : null;
+    currentIndex >= 0 && currentIndex < momentOrder.length - 1 ? momentOrder[currentIndex + 1]!.id : null;
 
   const pageLoading = isLoading || !data || !momentId;
   const showLoader = useDelayedVisible(pageLoading);

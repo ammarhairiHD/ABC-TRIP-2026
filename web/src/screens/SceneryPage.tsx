@@ -5,17 +5,22 @@ import Lightbox from "yet-another-react-lightbox";
 import Video from "yet-another-react-lightbox/plugins/video";
 import "yet-another-react-lightbox/styles.css";
 import { useScenery } from "../hooks/useScenery";
-import { useSceneryCaptions } from "../hooks/useSceneryCaptions";
 import { usePeopleContent } from "../hooks/usePeopleContent";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useDelayedVisible } from "../hooks/useDelayedVisible";
+import { useUnlockToken } from "../hooks/useUnlockToken";
+import { useSaveCaption } from "../hooks/useSaveCaption";
 import { Sprite } from "../components/Sprite";
 import { LoadingScreen } from "../components/LoadingScreen";
+import { UnlockSheet } from "../components/UnlockSheet";
+import { PixelButton } from "../components/PixelButton";
 import { useBlurhashDataUrl } from "../components/MediaThumb";
 import { buildLightboxSlides } from "../lib/mediaSlides";
 import { instagramHandle, instagramUrl } from "../lib/instagram";
 import { cn } from "../lib/utils";
 import type { SceneryMediaItem } from "../types/scenery";
+
+const EDITOR_SCOPE = "scenery-editor";
 
 // Matches index.css's --topbar-h: the one fixed chrome element (Layout's
 // sticky TopBar) that stays above this full-screen exhibition. Each slide
@@ -25,6 +30,11 @@ const SLIDE_HEIGHT = "h-[calc(100dvh-var(--topbar-h))]";
 
 function pad2(n: number): string {
   return String(n).padStart(2, "0");
+}
+
+function wordCount(text: string): number {
+  const trimmed = text.trim();
+  return trimmed.length === 0 ? 0 : trimmed.split(/\s+/).length;
 }
 
 /** One full-height section of the slide track. Registers itself by `index`
@@ -75,24 +85,96 @@ function SceneryIntroSlide({ instagram }: { instagram: string | undefined }) {
   );
 }
 
+/** Inline caption editor: single-line input (so a line break can never be
+ * typed in the first place), live word counter, Save/Cancel. The 200-char
+ * cap is enforced here via `maxLength` and, authoritatively, by the server;
+ * the 25-word cap is UI-only here and re-checked server-side too. */
+function CaptionEditor({
+  initialText,
+  onCancel,
+  onSave,
+  saving,
+}: {
+  initialText: string;
+  onCancel: () => void;
+  onSave: (text: string) => void;
+  saving: boolean;
+}) {
+  const { t } = useTranslation();
+  const [value, setValue] = useState(initialText);
+  const words = wordCount(value);
+  const overLimit = words > 25;
+
+  return (
+    <div className="mx-4 mb-4 shrink-0 border-2 border-panel-border bg-panel px-4 py-3 shadow-[3px_3px_0_0_var(--color-panel-border)]">
+      <input
+        type="text"
+        value={value}
+        maxLength={200}
+        placeholder={t("sceneryEditor.placeholder")}
+        onChange={(e) => setValue(e.target.value)}
+        disabled={saving}
+        className="min-h-11 w-full border-2 border-panel-border bg-bg px-3 py-2 text-sm text-ink"
+      />
+      <div className="mt-2 flex items-center justify-between gap-2">
+        <span className={cn("font-pixel text-[10px]", overLimit ? "text-clay" : "text-ink-dim")}>
+          {t("sceneryEditor.wordCount", { count: words })}
+        </span>
+        <div className="flex items-center gap-2">
+          <PixelButton
+            type="button"
+            variant="ghost"
+            className="min-h-9 px-3 py-2 text-[10px]"
+            onClick={onCancel}
+            disabled={saving}
+          >
+            {t("sceneryEditor.cancel")}
+          </PixelButton>
+          <PixelButton
+            type="button"
+            className="min-h-9 px-3 py-2 text-[10px]"
+            onClick={() => onSave(value)}
+            disabled={saving || overLimit}
+          >
+            {t("sceneryEditor.save")}
+          </PixelButton>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** One framed photo: object-fit: contain against a dark backdrop, a thin
- * 8-bit frame, a small "n / total" counter chip, and (only when one exists)
- * Alya's caption in a dialogue strip below. `eager` governs whether the real
- * image is mounted at all -- off-window slides show only their blurhash. */
+ * 8-bit frame, a small "n / total" counter chip, and a dialogue strip below
+ * holding Alya's caption (when there is one) and the editor's "✎" button --
+ * visible to every visitor, since there's no hidden route; tapping it is
+ * what's gated by the unlock code, not the button itself. */
 function SceneryFrame({
   item,
   index,
   total,
   caption,
   eager,
+  editing,
+  saving,
+  justSaved,
   onOpen,
+  onEditClick,
+  onCancelEdit,
+  onSave,
 }: {
   item: SceneryMediaItem;
   index: number;
   total: number;
-  caption: string | undefined;
+  caption: string | null;
   eager: boolean;
+  editing: boolean;
+  saving: boolean;
+  justSaved: boolean;
   onOpen: () => void;
+  onEditClick: () => void;
+  onCancelEdit: () => void;
+  onSave: (text: string) => void;
 }) {
   const { t } = useTranslation();
   const [loaded, setLoaded] = useState(false);
@@ -163,9 +245,19 @@ function SceneryFrame({
         </span>
       </div>
 
-      {caption && (
+      {editing ? (
+        <CaptionEditor initialText={caption ?? ""} onCancel={onCancelEdit} onSave={onSave} saving={saving} />
+      ) : (
         <div className="mx-4 mb-4 shrink-0 border-2 border-panel-border bg-panel px-4 py-3 text-center text-sm leading-relaxed text-ink-dim shadow-[3px_3px_0_0_var(--color-panel-border)]">
-          {caption}
+          {caption && <p>{caption}</p>}
+          {justSaved && <p className="mt-1 font-pixel text-[10px] text-accent-strong">{t("sceneryEditor.saved")}</p>}
+          <button
+            onClick={onEditClick}
+            aria-label={caption ? t("sceneryEditor.edit") : t("sceneryEditor.add")}
+            className={cn("font-pixel text-[10px] uppercase tracking-wide text-ink-dim hover:text-ink", caption && "mt-2")}
+          >
+            {caption ? t("sceneryEditor.edit") : t("sceneryEditor.add")}
+          </button>
         </div>
       )}
     </div>
@@ -176,15 +268,57 @@ export function SceneryPage() {
   const { t } = useTranslation();
   const reducedMotion = useReducedMotion();
 
-  const { data, isLoading } = useScenery();
+  const { token, isUnlocked, unlock, logout } = useUnlockToken(EDITOR_SCOPE);
+  const { data, isLoading } = useScenery({ noStore: isUnlocked });
   const media = useMemo(() => data?.media ?? [], [data]);
-  const dayIds = useMemo(() => media.map((item) => item.dayId), [media]);
-  const captions = useSceneryCaptions(dayIds);
   const peopleContent = usePeopleContent();
   const alyaInstagram = peopleContent.data?.person["alya"]?.links?.instagram;
 
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const slides = useMemo(() => buildLightboxSlides(media), [media]);
+
+  const [unlockSheetOpen, setUnlockSheetOpen] = useState(false);
+  const [pendingEditId, setPendingEditId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [justSavedId, setJustSavedId] = useState<string | null>(null);
+  const saveCaption = useSaveCaption();
+
+  const handleEditClick = useCallback(
+    (id: string) => {
+      if (!isUnlocked) {
+        setPendingEditId(id);
+        setUnlockSheetOpen(true);
+      } else {
+        setEditingId(id);
+      }
+    },
+    [isUnlocked]
+  );
+
+  const handleUnlocked = useCallback(() => {
+    setUnlockSheetOpen(false);
+    if (pendingEditId) {
+      setEditingId(pendingEditId);
+      setPendingEditId(null);
+    }
+  }, [pendingEditId]);
+
+  const handleSave = useCallback(
+    (id: string, text: string) => {
+      if (!token) return;
+      saveCaption.mutate(
+        { id, text, token },
+        {
+          onSuccess: () => {
+            setEditingId(null);
+            setJustSavedId(id);
+            setTimeout(() => setJustSavedId((current) => (current === id ? null : current)), 2000);
+          },
+        }
+      );
+    },
+    [token, saveCaption]
+  );
 
   // Slide 0 is always the intro; slide 1 the "nothing yet" placeholder when
   // there's no media, otherwise one slide per photo/video.
@@ -285,9 +419,15 @@ export function SceneryPage() {
                 item={item}
                 index={i}
                 total={media.length}
-                caption={captions.data?.[item.id]}
+                caption={item.caption}
                 eager={i === activeMediaIndex || i === activeMediaIndex + 1}
+                editing={editingId === item.id}
+                saving={saveCaption.isPending && editingId === item.id}
+                justSaved={justSavedId === item.id}
                 onOpen={() => setViewerIndex(i)}
+                onEditClick={() => handleEditClick(item.id)}
+                onCancelEdit={() => setEditingId(null)}
+                onSave={(text) => handleSave(item.id, text)}
               />
             </Slide>
           ))
@@ -314,6 +454,35 @@ export function SceneryPage() {
           </button>
         </div>
       )}
+
+      {isUnlocked && (
+        <div
+          className="pointer-events-auto fixed right-2 z-30 flex items-center gap-2 border-2 border-panel-border bg-panel/90 px-3 py-1.5 font-pixel text-[10px] text-ink-dim"
+          style={{ top: "calc(var(--topbar-h) + 8px)" }}
+        >
+          <span>{t("sceneryEditor.unlockedBanner")}</span>
+          <button onClick={logout} className="underline hover:text-ink">
+            {t("sceneryEditor.logout")}
+          </button>
+        </div>
+      )}
+
+      <UnlockSheet
+        open={unlockSheetOpen}
+        title={t("sceneryEditor.unlockTitle")}
+        body={t("sceneryEditor.unlockBody")}
+        codeLabel={t("sceneryEditor.code")}
+        submitLabel={t("sceneryEditor.submit")}
+        cancelLabel={t("sceneryEditor.cancel")}
+        wrongCodeMessage={t("sceneryEditor.wrongCode")}
+        rateLimitedMessage={t("sceneryEditor.rateLimited")}
+        onSubmit={unlock}
+        onUnlocked={handleUnlocked}
+        onClose={() => {
+          setUnlockSheetOpen(false);
+          setPendingEditId(null);
+        }}
+      />
 
       <Lightbox
         open={viewerIndex !== null}

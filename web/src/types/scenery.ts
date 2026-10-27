@@ -5,6 +5,7 @@ export interface SceneryMediaItem {
   width: number;
   height: number;
   blurhash: string | null;
+  caption: string | null;
   thumbUrl: string;
   webUrl: string | null;
   videoUrl: string | null;

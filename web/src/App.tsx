@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import { Opening } from "./screens/Opening";
 import { MomentsMap } from "./screens/MomentsMap";
-import { DaysMap } from "./screens/DaysMap";
+import { StoryList } from "./screens/StoryList";
 import { GalleryPage } from "./screens/GalleryPage";
 import { MomentPage } from "./screens/MomentPage";
 import { PeoplePage } from "./screens/PeoplePage";
@@ -63,7 +63,7 @@ export function App() {
       <Route path="/" element={<Opening />} />
       <Route element={<Layout />}>
         <Route path="/climb" element={<MomentsMap />} />
-        <Route path="/story" element={<DaysMap />} />
+        <Route path="/story" element={<StoryList />} />
         <Route path="/gallery/:n" element={<GalleryPage />} />
         <Route path="/day/:n" element={<GalleryRedirect prefix="" />} />
         <Route path="/moments/:id" element={<MomentPage />} />
@@ -76,7 +76,7 @@ export function App() {
       <Route path="/ms" element={<Opening />} />
       <Route element={<Layout />}>
         <Route path="/ms/climb" element={<MomentsMap />} />
-        <Route path="/ms/story" element={<DaysMap />} />
+        <Route path="/ms/story" element={<StoryList />} />
         <Route path="/ms/gallery/:n" element={<GalleryPage />} />
         <Route path="/ms/day/:n" element={<GalleryRedirect prefix="/ms" />} />
         <Route path="/ms/moments/:id" element={<MomentPage />} />
@@ -89,7 +89,7 @@ export function App() {
       <Route path="/ne" element={<Opening />} />
       <Route element={<Layout />}>
         <Route path="/ne/climb" element={<MomentsMap />} />
-        <Route path="/ne/story" element={<DaysMap />} />
+        <Route path="/ne/story" element={<StoryList />} />
         <Route path="/ne/gallery/:n" element={<GalleryPage />} />
         <Route path="/ne/day/:n" element={<GalleryRedirect prefix="/ne" />} />
         <Route path="/ne/moments/:id" element={<MomentPage />} />

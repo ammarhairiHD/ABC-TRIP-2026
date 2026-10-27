@@ -5,6 +5,7 @@ import { daysRouter } from "./routes/days.js";
 import { peopleRouter } from "./routes/people.js";
 import { momentsRouter } from "./routes/moments.js";
 import { sceneryRouter } from "./routes/scenery.js";
+import { unlockRouter } from "./routes/unlock.js";
 import { i18nRouter } from "./routes/i18n.js";
 
 const PORT = 3000;
@@ -19,6 +20,10 @@ app.use((_req, res, next) => {
   next();
 });
 
+// Small limit: the only bodies this API ever accepts are an unlock code and
+// a caption, both well under 1 KB.
+app.use(express.json({ limit: "10kb" }));
+
 app.use("/api", (_req, res, next) => {
   res.set("Cache-Control", "public, max-age=300");
   next();
@@ -29,6 +34,7 @@ app.use("/api", daysRouter);
 app.use("/api", peopleRouter);
 app.use("/api", momentsRouter);
 app.use("/api", sceneryRouter);
+app.use("/api", unlockRouter);
 
 app.use("/api", (_req, res) => {
   res.status(404).json({ error: "not found" });

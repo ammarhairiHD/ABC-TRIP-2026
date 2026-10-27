@@ -1,7 +1,7 @@
 /**
  * Which landmark sprite (web/public/sprites/{landmark}.png, 64x64, 1 frame)
- * shows on each day's node (DaysMap.tsx) and each of that day's moment
- * nodes (MomentsMap.tsx). Edit the ranges below to change it. A day with no
+ * shows on each day's box (StoryList.tsx) and each of that day's moment
+ * markers (MomentsMap.tsx). Edit the ranges below to change it. A day with no
  * matching range, or whose PNG is missing from public/sprites/, falls back
  * to a plain marker instead.
  */
