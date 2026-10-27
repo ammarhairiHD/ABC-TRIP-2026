@@ -136,11 +136,20 @@ export function MenuSheet({ open, onClose }: MenuSheetProps) {
               <button
                 onClick={() => {
                   onClose();
-                  navigate("/built");
+                  navigate("/credits");
                 }}
                 className="flex min-h-11 items-center justify-between border-b-2 border-panel-border py-2 text-left text-sm text-ink"
               >
-                {t("nav.howItsBuilt")}
+                {t("nav.credits")}
+              </button>
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate("/about");
+                }}
+                className="flex min-h-11 items-center justify-between border-b-2 border-panel-border py-2 text-left text-sm text-ink"
+              >
+                {t("nav.about")}
               </button>
             </nav>
           </motion.div>

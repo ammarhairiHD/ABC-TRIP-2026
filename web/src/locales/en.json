@@ -1,6 +1,6 @@
 {
-  "nav": { "moments": "Moments", "people": "People", "howItsBuilt": "How it's built", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "language": "Language", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
-  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "madeby": "Programmed by", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
+  "nav": { "moments": "Moments", "people": "People", "credits": "Credits", "about": "About", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "menuTutorial": "Find everyone here! ↗", "language": "Language", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
+  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "madeby": "A game by", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
   "climb": { "start": "Start", "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos", "photosHint": "↓ photos" },
   "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell", "inThisMoment": "In this moment", "previous": "Previous moment", "next": "Next moment", "backToClimb": "Back to the climb" },
   "viewer": { "inThisPhoto": "In this photo", "partOfMoment": "Part of the moment: {{title}}", "download": "Download original", "close": "Close", "previous": "Previous", "next": "Next" },
@@ -24,7 +24,21 @@
     "veteran": { "name": "Veteran", "description": "Not their first trip to the mountains." }
   },
   "peoplePage": { "title": "People", "hint": "Tap a character to see their journey!", "ourPorters": "Our porters" },
-  "built": { "title": "How it's built", "body": "A look at how this site was put together is coming soon." },
+  "built": { "title": "How it's built (coming soon)", "body": "A look at how this site was put together is coming soon." },
+  "about": {
+    "title": "About",
+    "bio": [
+      "Software engineer, startup founder and part-time student from Malaysia. Winner of the Best Malaysia Web Awards 2025, which arrived while he was somewhere in the Himalayas.",
+      "ABC was his first trip abroad without family or friends. He joined to take his aunty's place, knew no one at the airport, and came home with a whole crew, plus a certificate for reaching 4,130 m.",
+      "He built this site as a surprise for everyone who walked with him. Now he wants to go higher."
+    ],
+    "instagram": "Instagram",
+    "portfolio": "Portfolio",
+    "linkedin": "LinkedIn",
+    "youtube": "YouTube",
+    "email": "Email",
+    "emailDisplay": "ammarhairi [at] gmail.com"
+  },
   "scenery": { "eyebrow": "An exhibition", "intro": "Landscapes from the trail, through Alya's eyes.", "empty": "Coming soon.", "instagram": "View on Instagram", "translated": "Translated", "counter": "{{current}} / {{total}}" },
   "sceneryEditor": {
     "add": "✎ Add caption",
@@ -43,7 +57,29 @@
     "unlockedBanner": "Caption editing unlocked for this tab",
     "logout": "Log out"
   },
-  "credits": { "title": "The people who made this climb", "scenery": "Scenery", "thanks": "With thanks to", "closingVideo": "Play the closing video" },
+  "credits": {
+    "title": "The people who made this climb",
+    "scenery": "Scenery",
+    "thanks": "With thanks to",
+    "closingVideo": "Play the closing video",
+    "subtitle": "ABC TRIP 2026 · 9–19 October 2026 · Nepal",
+    "organisedBy": "Organised by",
+    "trekkers": "The trekkers",
+    "porters": "The porters",
+    "portersNote": "They carried our loads, and our spirits.",
+    "specialAwards": "Special awards",
+    "photos": "Photos",
+    "photosCredit": "Everyone's phones, via our Telegram group",
+    "storyCodeSprites": "Story, code & sprites",
+    "pixelArtHelper": "Pixel art helper",
+    "codingSidekick": "Coding sidekick",
+    "thankYou": "Thank you for walking with me.",
+    "mountainStays": "The mountain stays with us.",
+    "walkAgain": "↺ Walk it again",
+    "seeAllPhotos": "See all photos",
+    "skip": "Skip",
+    "paused": "Paused — tap to resume"
+  },
   "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map", "prev": "Prev", "next": "Next" },
   "loading": {
     "label": "LOADING",

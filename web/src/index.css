@@ -87,6 +87,23 @@ video {
   }
 }
 
+/* "↓ photos" hint (MomentDialogueBox): a slow, small bob so it reads as
+   pointing down without being distracting. The reduced-motion rule below
+   freezes it to a single still frame. */
+@keyframes photos-hint-bob {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+.animate-photos-hint-bob {
+  animation: photos-hint-bob 1.5s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.001ms !important;

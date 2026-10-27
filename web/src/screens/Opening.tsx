@@ -26,7 +26,7 @@ export function Opening() {
           {t("opening.eyebrow")}
         </p>
         <h1 className="font-pixel text-xl leading-loose text-ink">
-          ABC Trip 2026 2
+          ABC Trip 2026
         </h1>
 
         <p className="flex items-center gap-1.5 font-pixel text-[9px] uppercase tracking-wide text-ink-dim">

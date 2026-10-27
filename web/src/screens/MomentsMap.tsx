@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent } from "react";
-import { motion } from "motion/react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useJourney } from "../hooks/useJourney";
@@ -12,15 +11,22 @@ import { Sprite } from "../components/Sprite";
 import { MomentDialogueBox } from "../components/MomentDialogueBox";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { cn } from "../lib/utils";
-import { landmarkForDay } from "../config/dayLandmarks";
 import { MOMENT_KIND_STYLES } from "../lib/momentKindStyles";
 import { initials } from "../lib/initials";
 import { flattenMoments, type FlatMoment } from "../lib/moments";
-import { PANEL_COUNT, PANEL_ASPECT, mapPanelSrc, pointForMoment, allMomentPoints } from "../lib/mapLayout";
+import { OVERLAP_RATIO, pathYForFraction, computePanelLayout, pointForMoment, allMomentPoints, type PanelLayout } from "../lib/mapLayout";
 
-const MARKER_SIZE = 40;
+const MARKER_SIZE = 44; // the marker button's touch target (its visible diamond is much smaller) -- used to clear the people row above it
 const WALK_DURATION_S = 0.6;
+// Darkens the map art so sprites, the path and name labels read clearly
+// against it. One constant, tweak freely -- 0 is off, 1 is solid black.
+const MAP_OVERLAY_STRENGTH = 0.4;
 const MAX_PEOPLE_SHOWN = 6;
+// The dialogue sheet's height as a fraction of the whole screen (map +
+// sheet): resting around 60-65% so the map keeps 35-40%, draggable up to
+// ~90% for reading. Also used to pace the resize transition when settling.
+const DEFAULT_SHEET_RATIO = 0.62;
+const EXPANDED_SHEET_RATIO = 0.9;
 
 interface MapMoment extends FlatMoment {
   x: number; // fraction, 0-1
@@ -28,8 +34,9 @@ interface MapMoment extends FlatMoment {
 }
 
 /** /climb: the horizontal, RPG-style walk across all 37 moments. The map
- * is one wide image (4 panels) the camera pans across as the player steps
- * Next/Prev; the moment dialogue is permanently docked under it, since
+ * is one wide image (several panels, crossfaded at their seams) the camera
+ * pans across as the player steps Next/Prev; the moment dialogue is
+ * permanently docked under it, since
  * there's no "closed" state here -- the walk is always standing at some
  * moment. See /climb?place=1 (PlacementEditor below) for the tool that
  * produces moment-points.json. */
@@ -51,24 +58,40 @@ export function MomentsMap() {
   return <ClimbWalk moments={moments} />;
 }
 
-/** The 4 map panels, laid side by side, each scaled to fill `heightPx` while
- * keeping PANEL_ASPECT -- shared by the normal walk and the placement
- * editor so both agree on where a given (x, y) fraction actually lands. */
-function MapPanels({ heightPx }: { heightPx: number }) {
+/** The map panels, laid side by side per `panels` (from computePanelLayout)
+ * -- shared by the normal walk and the placement editor so both agree on
+ * where a given (x, y) fraction actually lands. Each panel after the first
+ * overlaps the previous one and fades in across that overlap (a left-edge
+ * mask gradient), which is what hides the seam: the panel underneath stays
+ * fully opaque, so the fading panel on top blends smoothly into it instead
+ * of cutting hard from one image to the next. `loading="lazy"` means a
+ * panel's bytes aren't fetched until it's actually near the viewport --
+ * panned-to panels download as the camera reaches them, not all at once. */
+function MapPanels({ panels, heightPx }: { panels: PanelLayout[]; heightPx: number }) {
+  const overlapPx = heightPx * OVERLAP_RATIO;
   return (
-    <div className="flex" style={{ height: heightPx }}>
-      {Array.from({ length: PANEL_COUNT }, (_, i) => (
+    <>
+      {panels.map((p, i) => (
         <img
-          key={i}
-          src={mapPanelSrc(i + 1)}
+          key={p.file}
+          src={`/map/${p.file}`}
           alt=""
           aria-hidden
           draggable={false}
-          className="pixelated flex-shrink-0 object-cover"
-          style={{ height: heightPx, width: heightPx * PANEL_ASPECT, imageRendering: "pixelated" }}
+          loading="lazy"
+          decoding="async"
+          className="pixelated absolute left-0 top-0"
+          style={{
+            left: p.left,
+            width: p.width,
+            height: heightPx,
+            imageRendering: "pixelated",
+            maskImage: i > 0 ? `linear-gradient(to right, transparent, black ${overlapPx}px)` : undefined,
+            WebkitMaskImage: i > 0 ? `linear-gradient(to right, transparent, black ${overlapPx}px)` : undefined,
+          }}
         />
       ))}
-    </div>
+    </>
   );
 }
 
@@ -81,6 +104,11 @@ function TrailSvg({ moments, worldWidth, worldHeight }: { moments: MapMoment[]; 
   );
 }
 
+/** A moment's spot on the trail: a small pixel diamond, kind-colored --
+ * the map art itself shows the place, so this doesn't need to (it used to
+ * carry a landmark icon; the two together was too busy and hard to read
+ * against the art). The button's own hit area stays a full 44px touch
+ * target even though the visible marker is much smaller. */
 function MomentMarker({
   moment,
   worldWidth,
@@ -95,9 +123,6 @@ function MomentMarker({
   onSelect: () => void;
 }) {
   const { t } = useTranslation();
-  const configuredLandmark = landmarkForDay(moment.dayId);
-  const [landmarkFailed, setLandmarkFailed] = useState(false);
-  const landmark = landmarkFailed ? null : configuredLandmark;
   const left = moment.x * worldWidth;
   const top = moment.y * worldHeight;
 
@@ -106,29 +131,14 @@ function MomentMarker({
       id={`moment-node-${moment.id}`}
       onClick={onSelect}
       aria-label={t(`moment.${moment.kind}`)}
-      className={cn(
-        "absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm",
-        active && "ring-2 ring-accent-strong"
-      )}
-      style={{ left, top, width: MARKER_SIZE, height: MARKER_SIZE }}
+      className="absolute flex min-h-11 min-w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+      style={{ left, top }}
     >
-      {landmark ? (
-        <img
-          src={`/sprites/${landmark}.png`}
-          alt=""
-          aria-hidden
-          draggable={false}
-          className="h-full w-full pixelated"
-          style={{ imageRendering: "pixelated" }}
-          onError={() => setLandmarkFailed(true)}
-        />
-      ) : (
-        <span className={cn("block h-3 w-3 rotate-45 border-2 bg-bg-soft", MOMENT_KIND_STYLES[moment.kind])} />
-      )}
       <span
         className={cn(
-          "absolute -bottom-1 -right-1 block h-3 w-3 rotate-45 border-2 bg-bg",
-          MOMENT_KIND_STYLES[moment.kind]
+          "block h-3 w-3 rotate-45 border-2 bg-bg-soft",
+          MOMENT_KIND_STYLES[moment.kind],
+          active && "bg-panel ring-2 ring-accent-strong"
         )}
       />
     </button>
@@ -152,16 +162,22 @@ function PeopleAtPoint({
   const shown = people.slice(0, MAX_PEOPLE_SHOWN);
   const overflow = people.length - shown.length;
   const slots = overflow > 0 ? [...shown, null] : shown;
-  // Each slot gets a fixed-width lane (nickname truncates to fit it) so
-  // names can't bleed into their neighbours even at 6-7 people wide.
-  const spacing = 44;
+  // Full nicknames, not truncated -- so same-row neighbours need more room
+  // than one slot-width apart. Staggering into two rows (even slots low,
+  // odd slots high) doubles the horizontal gap between any two names that
+  // actually share a row, which is what keeps them from colliding or
+  // running off each other at 6-7 people wide.
+  const spacing = 40;
+  const rowGap = 30;
   const startX = anchorX - ((slots.length - 1) * spacing) / 2;
-  const y = anchorY - MARKER_SIZE / 2 - 34;
+  const lowY = anchorY - MARKER_SIZE / 2 - 30;
+  const highY = lowY - rowGap;
 
   return (
     <>
       {slots.map((person, i) => {
         const x = startX + i * spacing;
+        const y = i % 2 === 0 ? lowY : highY;
         if (!person) {
           return (
             <div
@@ -181,11 +197,9 @@ function PeopleAtPoint({
             onClick={() => navigate(`/people/${person.id}`)}
             aria-label={person.nickname}
             className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5"
-            style={{ left: x, top: y, width: spacing }}
+            style={{ left: x, top: y }}
           >
-            <span className="w-full truncate text-center font-pixel text-[7px] leading-none text-ink">
-              {person.nickname}
-            </span>
+            <span className="whitespace-nowrap font-pixel text-[6px] leading-none text-ink">{person.nickname}</span>
             <Sprite
               fileName={`${person.id}.png`}
               frameCount={2}
@@ -201,19 +215,61 @@ function PeopleAtPoint({
   );
 }
 
-/** The real /climb screen: map area (~60% of the viewport below the top
+/** The real /climb screen: map area (~35-40% of the viewport below the top
  * bar) with the camera panning to keep the sprite in view, and the moment
- * dialogue docked below it (~40%). */
+ * dialogue docked below it as a draggable bottom sheet (~60-65% at rest,
+ * ~90% expanded). */
 function ClimbWalk({ moments }: { moments: MapMoment[] }) {
   const location = useLocation();
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
+  const { ref: screenRef, size: screenSize } = useElementSize<HTMLDivElement>();
   const { ref: viewportRef, size: viewportSize } = useElementSize<HTMLDivElement>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [facing, setFacing] = useState<"left" | "right">("right");
   const [isWalking, setIsWalking] = useState(false);
   const skipAnimRef = useRef(false);
   const mountedRef = useRef(false);
+
+  // The sheet's resting height, as a fraction of the whole screen (map +
+  // sheet) -- only ever DEFAULT_SHEET_RATIO or EXPANDED_SHEET_RATIO once a
+  // drag/tap settles. dragRatio is the live value while an actual drag is
+  // in progress (null the rest of the time); effectiveRatio is whichever
+  // of the two currently applies, and is what actually sizes the two panes.
+  const [sheetRatio, setSheetRatio] = useState(DEFAULT_SHEET_RATIO);
+  const [dragRatio, setDragRatio] = useState<number | null>(null);
+  const dragStartRef = useRef<{ y: number; ratio: number } | null>(null);
+  const effectiveRatio = dragRatio ?? sheetRatio;
+  const dragging = dragRatio !== null;
+
+  function handleHandlePointerDown(e: PointerEvent) {
+    dragStartRef.current = { y: e.clientY, ratio: effectiveRatio };
+    setDragRatio(effectiveRatio);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }
+
+  function handleHandlePointerMove(e: PointerEvent) {
+    const start = dragStartRef.current;
+    if (!start || screenSize.height === 0) return;
+    const deltaRatio = -(e.clientY - start.y) / screenSize.height;
+    setDragRatio(Math.min(EXPANDED_SHEET_RATIO, Math.max(DEFAULT_SHEET_RATIO, start.ratio + deltaRatio)));
+  }
+
+  function handleHandlePointerUp(e: PointerEvent) {
+    const start = dragStartRef.current;
+    dragStartRef.current = null;
+    if (!start) return;
+    const movedFar = Math.abs(e.clientY - start.y) > 6;
+    if (!movedFar) {
+      // A tap, not a drag: toggle instead of snapping to whichever side
+      // the (near-zero) drag distance happened to round to.
+      setSheetRatio(sheetRatio === DEFAULT_SHEET_RATIO ? EXPANDED_SHEET_RATIO : DEFAULT_SHEET_RATIO);
+    } else {
+      const mid = (DEFAULT_SHEET_RATIO + EXPANDED_SHEET_RATIO) / 2;
+      setSheetRatio((dragRatio ?? start.ratio) >= mid ? EXPANDED_SHEET_RATIO : DEFAULT_SHEET_RATIO);
+    }
+    setDragRatio(null);
+  }
 
   // The menu's "The climb" / "The way home" links pass a day via navigation
   // state (see MenuSheet): land on that day's first moment, with no walking
@@ -248,7 +304,7 @@ function ClimbWalk({ moments }: { moments: MapMoment[] }) {
   }, [activeIndex, reducedMotion]);
 
   const worldHeight = viewportSize.height;
-  const worldWidth = worldHeight * PANEL_ASPECT * PANEL_COUNT;
+  const { panels, worldWidth } = useMemo(() => computePanelLayout(worldHeight), [worldHeight]);
   const active = moments[activeIndex];
   const prevXRef = useRef<number | null>(null);
 
@@ -268,23 +324,56 @@ function ClimbWalk({ moments }: { moments: MapMoment[] }) {
   const activeDetail = useMoment(active ? active.id : null);
   const activeText = active ? momentsContent.data?.moment[active.id] : undefined;
   const people = activeDetail.data?.people ?? [];
+  // Moment 37 is the last stop on the trail -- its Next button leaves the
+  // walk and heads into the credits instead of being a dead end.
+  const isLastMoment = activeIndex === moments.length - 1;
 
   function goTo(index: number) {
     if (index < 0 || index >= moments.length) return;
+    setSheetRatio(DEFAULT_SHEET_RATIO); // so the walk (map) is visible while it plays out
     setActiveIndex(index);
   }
 
+  // No transition while actively dragging the sheet (so the map tracks the
+  // finger 1:1) or in reduced motion; otherwise the usual walk/pan easing.
+  const noWalkTransition = reducedMotion || dragging;
+  const sheetTransition = reducedMotion || dragging ? "none" : "height 0.2s ease-out";
+
   return (
-    <div className="mx-auto flex max-w-md flex-col" style={{ height: "calc(100dvh - var(--topbar-h))" }}>
-      <div ref={viewportRef} className="relative flex-[3] overflow-hidden bg-bg-soft">
+    <div ref={screenRef} className="mx-auto flex max-w-md flex-col" style={{ height: "calc(100dvh - var(--topbar-h))" }}>
+      <div
+        ref={viewportRef}
+        // This container is clipped (overflow-hidden) but the camera pan
+        // below is done entirely by hand via `transform: translateX`, never
+        // by scrolling it -- so its own native scrollLeft must always stay
+        // 0. Nothing here scrolls it on purpose, but overflow-hidden
+        // doesn't stop focus/scrollIntoView (a keyboard Tab onto an
+        // off-screen moment marker, or a testing tool clicking one
+        // directly) from doing it anyway, which would then silently stack
+        // with the transform pan. Reset it the instant it happens.
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          if (el.scrollLeft !== 0 || el.scrollTop !== 0) el.scrollTo(0, 0);
+        }}
+        className="relative flex-shrink-0 overflow-hidden bg-bg-soft"
+        style={{ height: `${(1 - effectiveRatio) * 100}%`, transition: sheetTransition }}
+      >
         {worldHeight > 0 && (
-          <motion.div
+          <div
             className="absolute inset-y-0 left-0"
-            style={{ width: worldWidth, height: worldHeight }}
-            animate={{ x: -cameraX }}
-            transition={{ duration: reducedMotion ? 0 : WALK_DURATION_S, ease: "easeInOut" }}
+            style={{
+              width: worldWidth,
+              height: worldHeight,
+              transform: `translateX(${-cameraX}px)`,
+              transition: noWalkTransition ? "none" : `transform ${WALK_DURATION_S}s ease-in-out`,
+            }}
           >
-            <MapPanels heightPx={worldHeight} />
+            <MapPanels panels={panels} heightPx={worldHeight} />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-black"
+              style={{ opacity: MAP_OVERLAY_STRENGTH }}
+            />
             <TrailSvg moments={moments} worldWidth={worldWidth} worldHeight={worldHeight} />
 
             {moments.map((m, i) => (
@@ -300,10 +389,15 @@ function ClimbWalk({ moments }: { moments: MapMoment[] }) {
 
             {people.length > 0 && <PeopleAtPoint people={people} anchorX={targetX} anchorY={targetY} />}
 
-            <motion.div
+            <div
               className="absolute -translate-x-1/2 -translate-y-1/2"
-              animate={{ left: targetX, top: targetY }}
-              transition={{ duration: reducedMotion ? 0 : WALK_DURATION_S, ease: "easeInOut" }}
+              style={{
+                left: targetX,
+                top: targetY,
+                transition: noWalkTransition
+                  ? "none"
+                  : `left ${WALK_DURATION_S}s ease-in-out, top ${WALK_DURATION_S}s ease-in-out`,
+              }}
             >
               {isWalking ? (
                 <Sprite fileName="ammar-walk.png" frameCount={4} initials="A" loop="walk" animate facing={facing} />
@@ -319,12 +413,12 @@ function ClimbWalk({ moments }: { moments: MapMoment[] }) {
                   facing={facing}
                 />
               )}
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="flex-[2] min-h-0">
+      <div className="min-h-0 flex-shrink-0" style={{ height: `${effectiveRatio * 100}%`, transition: sheetTransition }}>
         {active && (
           <MomentDialogueBox
             momentId={active.id}
@@ -337,9 +431,14 @@ function ClimbWalk({ moments }: { moments: MapMoment[] }) {
             loading={momentsContent.isLoading || activeDetail.isLoading}
             error={momentsContent.isError || activeDetail.isError}
             hasPrev={activeIndex > 0}
-            hasNext={activeIndex < moments.length - 1}
+            hasNext={true}
             onPrev={() => goTo(activeIndex - 1)}
-            onNext={() => goTo(activeIndex + 1)}
+            onNext={() => (isLastMoment ? navigate("/credits") : goTo(activeIndex + 1))}
+            expanded={sheetRatio === EXPANDED_SHEET_RATIO}
+            onToggleExpand={() => setSheetRatio(sheetRatio === DEFAULT_SHEET_RATIO ? EXPANDED_SHEET_RATIO : DEFAULT_SHEET_RATIO)}
+            onHandlePointerDown={handleHandlePointerDown}
+            onHandlePointerMove={handleHandlePointerMove}
+            onHandlePointerUp={handleHandlePointerUp}
           />
         )}
       </div>
@@ -364,8 +463,14 @@ function PlacementEditor({ moments }: { moments: MapMoment[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const draggingId = useRef<string | null>(null);
+  // A drag's mouseup synthesizes a trailing click wherever the pointer ends
+  // up -- usually the background now that the marker has moved out from
+  // under it -- which would otherwise immediately re-snap the point this
+  // same gesture just freely dragged. Set the moment a drag actually moves
+  // a point; the next background click consumes it instead of acting.
+  const justDraggedRef = useRef(false);
 
-  const worldWidth = PLACEMENT_HEIGHT * PANEL_ASPECT * PANEL_COUNT;
+  const { panels, worldWidth } = useMemo(() => computePanelLayout(PLACEMENT_HEIGHT), []);
 
   function fractionFromEvent(e: { clientX: number; clientY: number }) {
     const el = viewportRef.current;
@@ -380,22 +485,31 @@ function PlacementEditor({ moments }: { moments: MapMoment[] }) {
     setPositions((prev) => ({ ...prev, [id]: { x: Math.round(p.x * 1000) / 1000, y: Math.round(p.y * 1000) / 1000 } }));
   }
 
+  // Tap-to-drop snaps to the path by default -- only x comes from where you
+  // tapped. Dragging a marker directly (handleMarkerPointerMove) stays
+  // freehand, so you can still pull a point off the path on purpose.
   function handleBackgroundClick(e: MouseEvent) {
+    if (justDraggedRef.current) {
+      justDraggedRef.current = false;
+      return;
+    }
     if (!selectedId) return;
     const p = fractionFromEvent(e);
-    if (p) setPosition(selectedId, p);
+    if (p) setPosition(selectedId, { x: p.x, y: pathYForFraction(p.x) });
   }
 
   function handleMarkerPointerDown(id: string, e: PointerEvent) {
     e.stopPropagation();
     setSelectedId(id);
     draggingId.current = id;
+    justDraggedRef.current = false;
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   }
 
   function handleMarkerPointerMove(e: PointerEvent) {
     const id = draggingId.current;
     if (!id) return;
+    justDraggedRef.current = true;
     const p = fractionFromEvent(e);
     if (p) setPosition(id, p);
   }
@@ -415,7 +529,7 @@ function PlacementEditor({ moments }: { moments: MapMoment[] }) {
   return (
     <div className="mx-auto flex max-w-md flex-col gap-3 p-3" style={{ height: "calc(100dvh - var(--topbar-h))" }}>
       <p className="font-pixel text-[10px] text-ink-dim">
-        Placement mode. Scroll to see the whole trail. Tap a point then tap the map to drop it, or drag it directly.
+        Placement mode. Scroll to see the whole trail. Tap a point then tap the map to drop it on the path, or drag it directly to move it off the path.
       </p>
       <div
         ref={viewportRef}
@@ -425,13 +539,14 @@ function PlacementEditor({ moments }: { moments: MapMoment[] }) {
         className="relative flex-1 overflow-auto bg-bg-soft"
       >
         <div className="relative" style={{ width: worldWidth, height: PLACEMENT_HEIGHT }}>
-          <MapPanels heightPx={PLACEMENT_HEIGHT} />
+          <MapPanels panels={panels} heightPx={PLACEMENT_HEIGHT} />
           {moments.map((m) => {
             const p = positions[m.id] ?? pointForMoment(m.id, 0, 1);
             return (
               <button
                 key={m.id}
                 onPointerDown={(e) => handleMarkerPointerDown(m.id, e)}
+                onClick={(e) => e.stopPropagation()}
                 className={cn(
                   "absolute flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-panel font-pixel text-[8px]",
                   MOMENT_KIND_STYLES[m.kind],

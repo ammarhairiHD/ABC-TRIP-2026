@@ -8,7 +8,8 @@ import { MomentPage } from "./screens/MomentPage";
 import { PeoplePage } from "./screens/PeoplePage";
 import { ProfilePage } from "./screens/ProfilePage";
 import { SceneryPage } from "./screens/SceneryPage";
-import { HowItsBuilt } from "./screens/HowItsBuilt";
+import { AboutPage } from "./screens/AboutPage";
+import { CreditsPage } from "./screens/CreditsPage";
 import { Layout } from "./components/Layout";
 
 /** /day/:n used to be its own page; it's now the Gallery at /gallery/:n.
@@ -17,6 +18,13 @@ import { Layout } from "./components/Layout";
 function GalleryRedirect({ prefix }: { prefix: string }) {
   const { n } = useParams();
   return <Navigate to={`${prefix}/gallery/${n}`} replace />;
+}
+
+/** /built used to be the "How it's built" page itself; it's now folded
+ * into /about (see MenuSheet's menu rename). Kept as a redirect so old
+ * links still land somewhere real. */
+function BuiltRedirect({ prefix }: { prefix: string }) {
+  return <Navigate to={`${prefix}/about`} replace />;
 }
 
 /** Every photo, video and sprite probe in the app is a plain <img> or
@@ -70,7 +78,9 @@ export function App() {
         <Route path="/people" element={<PeoplePage />} />
         <Route path="/people/:id" element={<ProfilePage />} />
         <Route path="/scenery" element={<SceneryPage />} />
-        <Route path="/built" element={<HowItsBuilt />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/credits" element={<CreditsPage />} />
+        <Route path="/built" element={<BuiltRedirect prefix="" />} />
       </Route>
 
       <Route path="/ms" element={<Opening />} />
@@ -83,7 +93,9 @@ export function App() {
         <Route path="/ms/people" element={<PeoplePage />} />
         <Route path="/ms/people/:id" element={<ProfilePage />} />
         <Route path="/ms/scenery" element={<SceneryPage />} />
-        <Route path="/ms/built" element={<HowItsBuilt />} />
+        <Route path="/ms/about" element={<AboutPage />} />
+        <Route path="/ms/credits" element={<CreditsPage />} />
+        <Route path="/ms/built" element={<BuiltRedirect prefix="/ms" />} />
       </Route>
 
       <Route path="/ne" element={<Opening />} />
@@ -96,7 +108,9 @@ export function App() {
         <Route path="/ne/people" element={<PeoplePage />} />
         <Route path="/ne/people/:id" element={<ProfilePage />} />
         <Route path="/ne/scenery" element={<SceneryPage />} />
-        <Route path="/ne/built" element={<HowItsBuilt />} />
+        <Route path="/ne/about" element={<AboutPage />} />
+        <Route path="/ne/credits" element={<CreditsPage />} />
+        <Route path="/ne/built" element={<BuiltRedirect prefix="/ne" />} />
       </Route>
     </Routes>
   );

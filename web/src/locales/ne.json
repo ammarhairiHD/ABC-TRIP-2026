@@ -1,7 +1,7 @@
 {
-  "_review": "Draft Nepali. Must be checked by a Nepali speaker (e.g. Raj) before launch.",
-  "nav": { "moments": "क्षणहरू", "people": "मान्छेहरू", "howItsBuilt": "यो साइट कसरी बनाइयो", "scenery": "आल्याको दृश्य", "gallery": "ग्यालरी", "menu": "मेनु", "language": "भाषा", "comingSoonNote": "बहासा मलायु र नेपाली ठीकसँग पढिने बनाउन म अझै काम गरिरहेको छु। चाँडै आउँदैछ, इन्शाअल्लाह।" },
-  "opening": { "eyebrow": "अन्नपूर्ण आधार शिविर · नेपाल", "dates": "९–१९ अक्टोबर २०२६", "madeby": "निर्माता", "ofUs": "जना हामी", "days": "दिन", "photos": "तस्बिर", "highest": "सबैभन्दा उच्च बिन्दु", "begin": "आरोहण सुरु गर्नुहोस्", "browse": "तस्बिरहरू मात्र हेर्नुहोस्" },
+  "_review": "Draft Nepali. Must be checked by a Nepali speaker (e.g. Raj) before launch. Needs review: opening.madeby (new 'A game by' line), nav.menuTutorial.",
+  "nav": { "moments": "क्षणहरू", "people": "मान्छेहरू", "howItsBuilt": "यो साइट कसरी बनाइयो", "scenery": "आल्याको दृश्य", "gallery": "ग्यालरी", "menu": "मेनु", "menuTutorial": "सबैलाई यहाँ भेट्टाउनुहोस्! ↗", "language": "भाषा", "comingSoonNote": "बहासा मलायु र नेपाली ठीकसँग पढिने बनाउन म अझै काम गरिरहेको छु। चाँडै आउँदैछ, इन्शाअल्लाह।" },
+  "opening": { "eyebrow": "अन्नपूर्ण आधार शिविर · नेपाल", "dates": "९–१९ अक्टोबर २०२६", "madeby": "खेल निर्माता", "ofUs": "जना हामी", "days": "दिन", "photos": "तस्बिर", "highest": "सबैभन्दा उच्च बिन्दु", "begin": "आरोहण सुरु गर्नुहोस्", "browse": "तस्बिरहरू मात्र हेर्नुहोस्" },
   "climb": { "start": "सुरु", "day": "दिन {{n}}", "now": "दिन {{n}} · {{altitude}}", "more": "+ थप {{count}}", "seePhotos": "{{count}} तस्बिर हेर्नुहोस्", "photosHint": "↓ तस्बिरहरू" },
   "moment": { "challenge": "चुनौती", "highlight": "विशेष क्षण", "funny": "रमाइलो", "farewell": "बिदाइ", "inThisMoment": "यस क्षणमा", "previous": "अघिल्लो क्षण", "next": "अर्को क्षण", "backToClimb": "आरोहणमा फर्कनुहोस्" },
   "viewer": { "inThisPhoto": "यो तस्बिरमा", "partOfMoment": "यस क्षणको भाग: {{title}}", "download": "मूल फाइल डाउनलोड", "close": "बन्द", "previous": "अघिल्लो", "next": "अर्को" },

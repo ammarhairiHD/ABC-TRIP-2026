@@ -1,5 +1,5 @@
 {
-  "_review": "Draft Malay. Ammar to review.",
+  "_review": "Draft Malay. Ammar to review. Needs review: opening.madeby (new 'A game by' line), nav.menuTutorial.",
   "nav": {
     "moments": "Momen",
     "people": "Orang",
@@ -7,13 +7,14 @@
     "scenery": "Pemandangan oleh Alya",
     "gallery": "Galeri",
     "menu": "Menu",
+    "menuTutorial": "Cari semua orang di sini! ↗",
     "language": "Bahasa",
     "comingSoonNote": "Saya masih kerja keras untuk Bahasa Melayu dan Nepal supaya bacaannya betul. Akan datang, insyaAllah."
   },
   "opening": {
     "eyebrow": "Annapurna Base Camp · Nepal",
     "dates": "9–19 Oktober 2026",
-    "madeby": "Diprogram oleh",
+    "madeby": "Permainan oleh",
     "ofUs": "orang",
     "days": "hari",
     "photos": "foto",
