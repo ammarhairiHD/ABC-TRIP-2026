@@ -19,6 +19,7 @@ import { buildLightboxSlides } from "../lib/mediaSlides";
 import { instagramHandle, instagramUrl } from "../lib/instagram";
 import { cn } from "../lib/utils";
 import type { SceneryMediaItem } from "../types/scenery";
+import { SCENERY_CLOSING_NOTE } from "../data/scenery-closing";
 
 const EDITOR_SCOPE = "scenery-editor";
 
@@ -58,12 +59,20 @@ function Slide({
   );
 }
 
-function SceneryIntroSlide({ instagram }: { instagram: string | undefined }) {
+function SceneryIntroSlide({
+  instagram,
+  showScrollHint,
+  onScrollHint,
+}: {
+  instagram: string | undefined;
+  showScrollHint: boolean;
+  onScrollHint: () => void;
+}) {
   const { t } = useTranslation();
   const reducedMotion = useReducedMotion();
 
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-4 bg-bg px-6 text-center">
+    <div className="relative flex h-full flex-col items-center justify-center gap-4 bg-bg px-6 text-center">
       <Sprite fileName="alya.png" frameCount={2} initials="A" loop="idle" animate={!reducedMotion} scale={6} />
       <div>
         <p className="font-pixel text-[10px] uppercase tracking-wide text-ink-dim">{t("scenery.eyebrow")}</p>
@@ -80,6 +89,18 @@ function SceneryIntroSlide({ instagram }: { instagram: string | undefined }) {
         >
           {instagramHandle(instagram)}
         </a>
+      )}
+      {showScrollHint && (
+        <button
+          onClick={onScrollHint}
+          aria-label={t("scenery.scrollHintLabel")}
+          className="absolute inset-x-0 bottom-6 flex flex-col items-center font-pixel text-[9px] uppercase tracking-wide text-ink-dim"
+        >
+          <span className="animate-photos-hint-bob inline-block">
+            <span className="sm:hidden">{t("scenery.scrollHintMobile")}</span>
+            <span className="hidden sm:inline">{t("scenery.scrollHintDesktop")}</span>
+          </span>
+        </button>
       )}
     </div>
   );
@@ -154,6 +175,7 @@ function SceneryFrame({
   index,
   total,
   caption,
+  closingNote,
   eager,
   editing,
   saving,
@@ -167,6 +189,7 @@ function SceneryFrame({
   index: number;
   total: number;
   caption: string | null;
+  closingNote: string | null;
   eager: boolean;
   editing: boolean;
   saving: boolean;
@@ -245,7 +268,12 @@ function SceneryFrame({
         </span>
       </div>
 
-      {editing ? (
+      {closingNote ? (
+        <div className="mx-4 mb-4 shrink-0 border-2 border-panel-border bg-panel px-5 py-4 text-center text-base leading-relaxed text-ink shadow-[3px_3px_0_0_var(--color-panel-border)]">
+          <p style={{ whiteSpace: "pre-line" }}>{closingNote}</p>
+          <p className="mt-2 font-pixel text-[10px] text-ink-dim">{t("scenery.closingSignature")}</p>
+        </div>
+      ) : editing ? (
         <CaptionEditor initialText={caption ?? ""} onCancel={onCancelEdit} onSave={onSave} saving={saving} />
       ) : (
         <div className="mx-4 mb-4 shrink-0 border-2 border-panel-border bg-panel px-4 py-3 text-center text-sm leading-relaxed text-ink-dim shadow-[3px_3px_0_0_var(--color-panel-border)]">
@@ -403,7 +431,11 @@ export function SceneryPage() {
         style={{ height: "calc(100dvh - var(--topbar-h))" }}
       >
         <Slide index={0} setRef={(el) => (slideRefs.current[0] = el)}>
-          <SceneryIntroSlide instagram={alyaInstagram} />
+          <SceneryIntroSlide
+            instagram={alyaInstagram}
+            showScrollHint={activeSlide === 0}
+            onScrollHint={() => goTo(1)}
+          />
         </Slide>
 
         {media.length === 0 ? (
@@ -420,6 +452,7 @@ export function SceneryPage() {
                 index={i}
                 total={media.length}
                 caption={item.caption}
+                closingNote={i === media.length - 1 && SCENERY_CLOSING_NOTE.trim() ? SCENERY_CLOSING_NOTE : null}
                 eager={i === activeMediaIndex || i === activeMediaIndex + 1}
                 editing={editingId === item.id}
                 saving={saveCaption.isPending && editingId === item.id}

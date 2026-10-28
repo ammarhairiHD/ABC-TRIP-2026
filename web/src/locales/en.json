@@ -47,7 +47,7 @@
     "email": "Email",
     "emailDisplay": "ammarhairi [at] gmail.com"
   },
-  "scenery": { "eyebrow": "An exhibition", "intro": "Landscapes from the trail, through Alya's eyes.", "empty": "Coming soon.", "instagram": "View on Instagram", "translated": "Translated", "counter": "{{current}} / {{total}}" },
+  "scenery": { "eyebrow": "An exhibition", "intro": "Landscapes from the trail, through Alya's eyes.", "empty": "Coming soon.", "instagram": "View on Instagram", "translated": "Translated", "counter": "{{current}} / {{total}}", "closingSignature": "— Alya", "scrollHintMobile": "▼ Scroll", "scrollHintDesktop": "▼ Scroll or ← → keys", "scrollHintLabel": "Scroll to the first photo" },
   "sceneryEditor": {
     "add": "✎ Add caption",
     "edit": "✎ Edit caption",

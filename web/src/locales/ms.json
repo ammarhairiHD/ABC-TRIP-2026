@@ -80,7 +80,11 @@
     "empty": "Akan datang.",
     "instagram": "Lihat di Instagram",
     "translated": "Diterjemah",
-    "counter": "{{current}} / {{total}}"
+    "counter": "{{current}} / {{total}}",
+    "closingSignature": "— Alya",
+    "scrollHintMobile": "▼ Skrol",
+    "scrollHintDesktop": "▼ Skrol atau kekunci ← →",
+    "scrollHintLabel": "Skrol ke foto pertama"
   },
   "credits": {
     "title": "Mereka yang menjayakan pendakian ini",
