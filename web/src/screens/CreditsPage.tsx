@@ -8,8 +8,9 @@ import { Sprite } from "../components/Sprite";
 import { PixelButton } from "../components/PixelButton";
 import { LoadingScreen } from "../components/LoadingScreen";
 import { initials } from "../lib/initials";
+import { cn } from "../lib/utils";
 import { instagramHandle, instagramUrl } from "../lib/instagram";
-import { ORGANISED_BY, SPECIAL_AWARDS, SCENERY_CREDIT, STORY_CODE_SPRITES, PIXEL_ART_HELPER, CODING_SIDEKICK } from "../data/credits";
+import { ORGANISED_BY, SPECIAL_AWARDS, SCENERY_CREDIT, MUSIC_CREDIT, STORY_CODE_SPRITES, PIXEL_ART_HELPER, CODING_SIDEKICK } from "../data/credits";
 import type { PersonListItem } from "../types/people";
 
 // How fast the credits crawl upward, in pixels/second -- the one constant
@@ -36,11 +37,15 @@ function PersonTile({ person }: { person: PersonListItem }) {
   );
 }
 
-/** /credits: a slow, game-style end-crawl. Scrolling is done by hand (a
- * translateY driven by requestAnimationFrame) rather than native scroll, so
- * a tap anywhere can pause/resume it and Skip can jump straight to the end
- * -- both awkward with a real scroll container mid-animation. Reduced
- * motion drops the crawl entirely for a normal, manually-scrollable page. */
+/** /credits: a slow, game-style end-crawl that hands off to a normal,
+ * freely-scrollable page the moment the reader wants control -- Skip, or
+ * any wheel/touch on it. `mode` tracks which: "crawl" drives translateY by
+ * hand (requestAnimationFrame) inside an overflow-hidden viewport; "free"
+ * drops the transform and makes that same viewport overflow-y-auto, with
+ * its scrollTop seeded from wherever the crawl had gotten to so the
+ * handoff is seamless. A small Play button in "free" mode resumes the
+ * crawl from the reader's current scroll position. Reduced motion skips
+ * "crawl" entirely and starts straight in a normal scrollable page. */
 export function CreditsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -61,11 +66,12 @@ export function CreditsPage() {
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [offset, setOffset] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [mode, setMode] = useState<"crawl" | "free">("crawl");
   const offsetRef = useRef(0);
-  const pausedRef = useRef(false);
   const maxOffsetRef = useRef(0);
-  pausedRef.current = paused;
+  // Where "free" mode's native scrollTop should start from -- set right
+  // before switching modes, applied by the useLayoutEffect below.
+  const pendingScrollRef = useRef(0);
 
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
@@ -81,15 +87,24 @@ export function CreditsPage() {
     return () => observer.disconnect();
   }, [reducedMotion, trekkers.length, porters.length]);
 
+  // Seeds "free" mode's real scroll position right after the viewport
+  // switches to overflow-y-auto, before the browser paints -- so handing
+  // off never produces a visible jump.
+  useLayoutEffect(() => {
+    if (reducedMotion || mode !== "free") return;
+    const viewport = viewportRef.current;
+    if (viewport) viewport.scrollTop = pendingScrollRef.current;
+  }, [reducedMotion, mode]);
+
   useEffect(() => {
-    if (reducedMotion) return;
+    if (reducedMotion || mode !== "crawl") return;
     let raf = 0;
     let last: number | null = null;
     const tick = (now: number) => {
       if (last == null) last = now;
       const dt = (now - last) / 1000;
       last = now;
-      if (!pausedRef.current && offsetRef.current < maxOffsetRef.current) {
+      if (offsetRef.current < maxOffsetRef.current) {
         offsetRef.current = Math.min(maxOffsetRef.current, offsetRef.current + SCROLL_SPEED_PX_PER_S * dt);
         setOffset(offsetRef.current);
       }
@@ -97,11 +112,46 @@ export function CreditsPage() {
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [reducedMotion]);
+  }, [reducedMotion, mode]);
+
+  // Any wheel or touch on the crawl hands control straight to the reader --
+  // only listened for while actually crawling, and only this way (not a
+  // React onWheel/onTouchStart on the div) so the Skip/Play buttons can
+  // opt out with a plain stopPropagation rather than fighting a double
+  // mode-change (see their onTouchStart below).
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || reducedMotion || mode !== "crawl") return;
+    const handoff = () => {
+      pendingScrollRef.current = offsetRef.current;
+      setMode("free");
+    };
+    viewport.addEventListener("wheel", handoff, { passive: true });
+    viewport.addEventListener("touchstart", handoff, { passive: true });
+    return () => {
+      viewport.removeEventListener("wheel", handoff);
+      viewport.removeEventListener("touchstart", handoff);
+    };
+    // `isLoading` is otherwise unused here -- it's there so this re-runs
+    // once the real (non-loading-screen) tree mounts and viewportRef stops
+    // being null. Without it, this effect's first run (during the loading
+    // screen, before `viewportRef` has anything to attach to) would be the
+    // only one, since reducedMotion/mode don't themselves change at that
+    // point -- see the ResizeObserver effect above, saved from the same bug
+    // only because trekkers.length/porters.length happen to change too.
+  }, [reducedMotion, mode, isLoading]);
 
   function skip() {
     offsetRef.current = maxOffsetRef.current;
+    pendingScrollRef.current = maxOffsetRef.current;
+    setMode("free");
+  }
+
+  function resumeCrawl() {
+    const viewport = viewportRef.current;
+    offsetRef.current = viewport ? viewport.scrollTop : offsetRef.current;
     setOffset(offsetRef.current);
+    setMode("crawl");
   }
 
   const pageLoading = isLoading || !data;
@@ -176,6 +226,21 @@ export function CreditsPage() {
           <p className="mt-1 text-sm text-ink-dim">{t("credits.photosCredit")}</p>
         </div>
         <div>
+          <SectionHeading>{t("credits.music")}</SectionHeading>
+          <p className="mt-1 text-sm text-ink-dim">
+            <a
+              href={MUSIC_CREDIT.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-accent-strong underline underline-offset-4"
+            >
+              "{MUSIC_CREDIT.title}"
+            </a>{" "}
+            by {MUSIC_CREDIT.artist}, via {MUSIC_CREDIT.source}
+          </p>
+        </div>
+        <div>
           <SectionHeading>{t("credits.storyCodeSprites")}</SectionHeading>
           <p className="mt-1 text-sm text-ink-dim">{STORY_CODE_SPRITES}</p>
         </div>
@@ -214,30 +279,38 @@ export function CreditsPage() {
   return (
     <div
       ref={viewportRef}
-      onClick={() => setPaused((p) => !p)}
-      className="relative overflow-hidden bg-bg"
+      className={cn("relative bg-bg", mode === "crawl" ? "overflow-hidden" : "overflow-y-auto")}
       style={{ height: "calc(100dvh - var(--topbar-h))" }}
     >
-      <div style={{ transform: `translateY(${-offset}px)` }}>{body}</div>
+      <div style={mode === "crawl" ? { transform: `translateY(${-offset}px)` } : undefined}>{body}</div>
 
-      {paused && (
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-3 flex justify-center font-pixel text-[10px] text-ink-dim"
+      {mode === "crawl" ? (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            skip();
+          }}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="absolute right-3 top-3 min-h-11 border-2 border-panel-border bg-panel/90 px-3 font-pixel text-[10px] text-ink-dim"
         >
-          {t("credits.paused")}
-        </div>
+          {t("credits.skip")}
+        </button>
+      ) : (
+        // fixed, not absolute: "free" mode's viewport is now the thing that
+        // natively scrolls, so an absolute button would scroll away with
+        // the content the moment the reader scrolls past the top -- fixed
+        // keeps it reachable the whole way down.
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            resumeCrawl();
+          }}
+          onTouchStart={(e) => e.stopPropagation()}
+          className="fixed right-3 top-[calc(var(--topbar-h)+12px)] min-h-11 border-2 border-panel-border bg-panel/90 px-3 font-pixel text-[10px] text-ink-dim"
+        >
+          {t("credits.play")}
+        </button>
       )}
-
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          skip();
-        }}
-        className="absolute right-3 top-3 min-h-11 border-2 border-panel-border bg-panel/90 px-3 font-pixel text-[10px] text-ink-dim"
-      >
-        {t("credits.skip")}
-      </button>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
-  "nav": { "moments": "Moments", "people": "People", "credits": "Credits", "about": "About", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "menuTutorial": "Find everyone here! ↗", "language": "Language", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
-  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "madeby": "A game by", "ofUs": "of us", "days": "days", "photos": "photos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
+  "nav": { "moments": "Moments", "people": "People", "credits": "Credits", "about": "About", "scenery": "Scenery by Alya", "gallery": "Gallery", "menu": "Menu", "menuTutorial": "Find everyone here! ↗", "musicOn": "Turn music off", "musicOff": "Turn music on", "musicStateOn": "On", "musicStateOff": "Off", "language": "Language", "comingSoonNote": "I'm still working on Bahasa Melayu and Nepali so they read right. Coming soon, insyaAllah." },
+  "opening": { "eyebrow": "Annapurna Base Camp · Nepal", "dates": "9–19 October 2026", "madeby": "A game by", "ofUs": "of us", "days": "days", "photos": "photos & videos", "highest": "highest point", "begin": "Begin the climb", "browse": "Just browse the photos" },
   "climb": { "start": "Start", "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos", "photosHint": "↓ photos" },
   "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell", "inThisMoment": "In this moment", "previous": "Previous moment", "next": "Next moment", "backToClimb": "Back to the climb" },
   "viewer": { "inThisPhoto": "In this photo", "partOfMoment": "Part of the moment: {{title}}", "download": "Download original", "close": "Close", "previous": "Previous", "next": "Next" },
@@ -23,7 +23,15 @@
     "unstoppable": { "name": "Never Gave Up", "description": "Finished every climb, no matter how hard." },
     "veteran": { "name": "Veteran", "description": "Not their first trip to the mountains." }
   },
-  "peoplePage": { "title": "People", "hint": "Tap a character to see their journey!", "ourPorters": "Our porters" },
+  "peoplePage": {
+    "title": "Choose your character",
+    "selectHint": "▶ Tap a character",
+    "organisers": "Organisers",
+    "trekkers": "Trekkers",
+    "porters": "Porters",
+    "random": "? Random",
+    "randomLabel": "Pick a random character"
+  },
   "built": { "title": "How it's built (coming soon)", "body": "A look at how this site was put together is coming soon." },
   "about": {
     "title": "About",
@@ -71,6 +79,7 @@
     "photos": "Photos",
     "photosCredit": "Everyone's phones, via our Telegram group",
     "storyCodeSprites": "Story, code & sprites",
+    "music": "Music",
     "pixelArtHelper": "Pixel art helper",
     "codingSidekick": "Coding sidekick",
     "thankYou": "Thank you for walking with me.",
@@ -78,7 +87,7 @@
     "walkAgain": "↺ Walk it again",
     "seeAllPhotos": "See all photos",
     "skip": "Skip",
-    "paused": "Paused — tap to resume"
+    "play": "▶ Play credits"
   },
   "common": { "findSomeone": "Find someone", "back": "Back", "loading": "Loading…", "backToMap": "Back to the map", "prev": "Prev", "next": "Next" },
   "loading": {

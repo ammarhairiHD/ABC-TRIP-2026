@@ -1,17 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  /* 8-bit lofi palette: dusk sky, sage, clay. Muted on purpose. */
-  --color-bg: #1b1f2b;
-  --color-bg-soft: #262c3d;
-  --color-panel: #2d3447;
-  --color-panel-border: #5b6478;
-  --color-ink: #e9e4d6;
-  --color-ink-dim: #a6a2ad;
-  --color-accent: #7fa690;
-  --color-accent-strong: #9fc4ac;
-  --color-clay: #c98a5e;
-  --color-path: #4a5568;
+  /* 8-bit lofi palette: dusk (deep indigo/purple) + sunset orange. Muted on
+     purpose. All contrast-checked against WCAG AA (>=4.5:1 for text). */
+  --color-bg: #1d1a2f;
+  --color-bg-soft: #2a2444;
+  --color-panel: #342c52;
+  --color-panel-border: #8678b8;
+  --color-ink: #f5e6d8;
+  --color-ink-dim: #b3a6d6;
+  --color-accent: #d9823f;
+  --color-accent-strong: #f0a35e;
+  --color-clay: #d9674a;
+  --color-path: #4a3f6b;
+
+  /* Moment-kind tag tones -- distinct hues so challenge/highlight/funny/
+     farewell stay tellable apart at a glance (challenge keeps --color-clay). */
+  --color-lavender: #9b7fd1;
+  --color-rose: #e08a93;
+  --color-teal: #5fb8ac;
 
   --font-pixel: "Press Start 2P", ui-monospace, monospace;
   --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -28,6 +35,10 @@ body,
    exactly the viewport below the sticky top bar, never more. */
 :root {
   --topbar-h: 48px;
+
+  /* Crisp 1-2px pixel shadow (zero blur) for text sitting on a photo --
+     see screens/Opening.tsx. Two offset solid layers, not a blurred one. */
+  --pixel-text-shadow: 1px 1px 0 rgba(13, 11, 22, 0.9), 2px 2px 0 rgba(13, 11, 22, 0.6);
 }
 
 body {
@@ -102,6 +113,39 @@ video {
 
 .animate-photos-hint-bob {
   animation: photos-hint-bob 1.5s ease-in-out infinite;
+}
+
+/* Character-select screen (PeoplePage): the little "▼" that hovers over
+   whichever tile is hovered/focused, and the blinking "tap a character"
+   hint shown before anything's picked. Both freeze to a still, visible
+   frame under the reduced-motion rule below -- never removed, just stilled. */
+@keyframes cursor-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+.animate-cursor-bob {
+  animation: cursor-bob 0.8s ease-in-out infinite;
+}
+
+@keyframes select-hint-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.animate-select-hint-blink {
+  animation: select-hint-blink 1.2s steps(1) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

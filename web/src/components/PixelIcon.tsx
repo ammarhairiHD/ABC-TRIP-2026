@@ -1,3 +1,5 @@
+import { cn } from "../lib/utils";
+
 /** Generic 8x8 pixel-art glyphs for the About page's link buttons -- plain
  * shapes (camera, globe, profile card, play triangle, envelope), never an
  * official brand mark, so they're drawn by hand here instead of pulling in
@@ -8,13 +10,22 @@ const ICONS = {
   profile: ["########", "#......#", "#.####.#", "#.####.#", "#.####.#", "#.####.#", "#......#", "########"],
   play: ["########", "#......#", "#.#....#", "#.##...#", "#.###..#", "#.##...#", "#.#....#", "########"],
   envelope: ["########", "##....##", "#.##.#.#", "#.####.#", "#......#", "#......#", "#......#", "########"],
+  mountain: ["........", "...##...", "..####..", "..####..", ".######.", ".######.", "########", "########"],
 } as const;
 
 export type PixelIconName = keyof typeof ICONS;
 
 /** Renders one of the ICONS glyphs above as crisp SVG pixels, colored by
  * `currentColor` so it always matches the button text around it. */
-export function PixelIcon({ name, size = 20 }: { name: PixelIconName; size?: number }) {
+export function PixelIcon({
+  name,
+  size = 20,
+  className,
+}: {
+  name: PixelIconName;
+  size?: number;
+  className?: string;
+}) {
   const rows = ICONS[name];
   const cells: { x: number; y: number }[] = [];
   rows.forEach((row, y) => {
@@ -30,7 +41,7 @@ export function PixelIcon({ name, size = 20 }: { name: PixelIconName; size?: num
       height={size}
       aria-hidden
       shapeRendering="crispEdges"
-      className="shrink-0 text-current"
+      className={cn("shrink-0 text-current", className)}
     >
       {cells.map((c) => (
         <rect key={`${c.x}-${c.y}`} x={c.x} y={c.y} width={1} height={1} fill="currentColor" />

@@ -11,6 +11,7 @@ import { SceneryPage } from "./screens/SceneryPage";
 import { AboutPage } from "./screens/AboutPage";
 import { CreditsPage } from "./screens/CreditsPage";
 import { Layout } from "./components/Layout";
+import { MusicProvider } from "./contexts/MusicContext";
 
 /** /day/:n used to be its own page; it's now the Gallery at /gallery/:n.
  * Kept as a redirect so old links (shared before this rename) still land
@@ -67,51 +68,53 @@ export function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<Opening />} />
-      <Route element={<Layout />}>
-        <Route path="/climb" element={<MomentsMap />} />
-        <Route path="/story" element={<StoryList />} />
-        <Route path="/gallery/:n" element={<GalleryPage />} />
-        <Route path="/day/:n" element={<GalleryRedirect prefix="" />} />
-        <Route path="/moments/:id" element={<MomentPage />} />
-        <Route path="/people" element={<PeoplePage />} />
-        <Route path="/people/:id" element={<ProfilePage />} />
-        <Route path="/scenery" element={<SceneryPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/credits" element={<CreditsPage />} />
-        <Route path="/built" element={<BuiltRedirect prefix="" />} />
-      </Route>
+    <MusicProvider>
+      <Routes>
+        <Route path="/" element={<Opening />} />
+        <Route element={<Layout />}>
+          <Route path="/climb" element={<MomentsMap />} />
+          <Route path="/story" element={<StoryList />} />
+          <Route path="/gallery/:n" element={<GalleryPage />} />
+          <Route path="/day/:n" element={<GalleryRedirect prefix="" />} />
+          <Route path="/moments/:id" element={<MomentPage />} />
+          <Route path="/people" element={<PeoplePage />} />
+          <Route path="/people/:id" element={<ProfilePage />} />
+          <Route path="/scenery" element={<SceneryPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/credits" element={<CreditsPage />} />
+          <Route path="/built" element={<BuiltRedirect prefix="" />} />
+        </Route>
 
-      <Route path="/ms" element={<Opening />} />
-      <Route element={<Layout />}>
-        <Route path="/ms/climb" element={<MomentsMap />} />
-        <Route path="/ms/story" element={<StoryList />} />
-        <Route path="/ms/gallery/:n" element={<GalleryPage />} />
-        <Route path="/ms/day/:n" element={<GalleryRedirect prefix="/ms" />} />
-        <Route path="/ms/moments/:id" element={<MomentPage />} />
-        <Route path="/ms/people" element={<PeoplePage />} />
-        <Route path="/ms/people/:id" element={<ProfilePage />} />
-        <Route path="/ms/scenery" element={<SceneryPage />} />
-        <Route path="/ms/about" element={<AboutPage />} />
-        <Route path="/ms/credits" element={<CreditsPage />} />
-        <Route path="/ms/built" element={<BuiltRedirect prefix="/ms" />} />
-      </Route>
+        <Route path="/ms" element={<Opening />} />
+        <Route element={<Layout />}>
+          <Route path="/ms/climb" element={<MomentsMap />} />
+          <Route path="/ms/story" element={<StoryList />} />
+          <Route path="/ms/gallery/:n" element={<GalleryPage />} />
+          <Route path="/ms/day/:n" element={<GalleryRedirect prefix="/ms" />} />
+          <Route path="/ms/moments/:id" element={<MomentPage />} />
+          <Route path="/ms/people" element={<PeoplePage />} />
+          <Route path="/ms/people/:id" element={<ProfilePage />} />
+          <Route path="/ms/scenery" element={<SceneryPage />} />
+          <Route path="/ms/about" element={<AboutPage />} />
+          <Route path="/ms/credits" element={<CreditsPage />} />
+          <Route path="/ms/built" element={<BuiltRedirect prefix="/ms" />} />
+        </Route>
 
-      <Route path="/ne" element={<Opening />} />
-      <Route element={<Layout />}>
-        <Route path="/ne/climb" element={<MomentsMap />} />
-        <Route path="/ne/story" element={<StoryList />} />
-        <Route path="/ne/gallery/:n" element={<GalleryPage />} />
-        <Route path="/ne/day/:n" element={<GalleryRedirect prefix="/ne" />} />
-        <Route path="/ne/moments/:id" element={<MomentPage />} />
-        <Route path="/ne/people" element={<PeoplePage />} />
-        <Route path="/ne/people/:id" element={<ProfilePage />} />
-        <Route path="/ne/scenery" element={<SceneryPage />} />
-        <Route path="/ne/about" element={<AboutPage />} />
-        <Route path="/ne/credits" element={<CreditsPage />} />
-        <Route path="/ne/built" element={<BuiltRedirect prefix="/ne" />} />
-      </Route>
-    </Routes>
+        <Route path="/ne" element={<Opening />} />
+        <Route element={<Layout />}>
+          <Route path="/ne/climb" element={<MomentsMap />} />
+          <Route path="/ne/story" element={<StoryList />} />
+          <Route path="/ne/gallery/:n" element={<GalleryPage />} />
+          <Route path="/ne/day/:n" element={<GalleryRedirect prefix="/ne" />} />
+          <Route path="/ne/moments/:id" element={<MomentPage />} />
+          <Route path="/ne/people" element={<PeoplePage />} />
+          <Route path="/ne/people/:id" element={<ProfilePage />} />
+          <Route path="/ne/scenery" element={<SceneryPage />} />
+          <Route path="/ne/about" element={<AboutPage />} />
+          <Route path="/ne/credits" element={<CreditsPage />} />
+          <Route path="/ne/built" element={<BuiltRedirect prefix="/ne" />} />
+        </Route>
+      </Routes>
+    </MusicProvider>
   );
 }

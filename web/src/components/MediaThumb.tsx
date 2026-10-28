@@ -64,7 +64,7 @@ export function MediaThumb({ media, onOpen }: { media: MediaLike; onOpen: () => 
         )}
       />
       {media.type === "video" && (
-        <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-ink">
+        <span className="absolute bottom-1 right-1 flex h-5 w-5 items-center justify-center rounded-full bg-bg/70 text-ink">
           <svg width="8" height="8" viewBox="0 0 8 8" aria-hidden="true" fill="currentColor">
             <path d="M0 0 8 4 0 8Z" />
           </svg>

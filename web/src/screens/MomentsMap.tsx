@@ -371,7 +371,7 @@ function ClimbWalk({ moments }: { moments: MapMoment[] }) {
             <MapPanels panels={panels} heightPx={worldHeight} />
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-black"
+              className="pointer-events-none absolute inset-0 bg-bg"
               style={{ opacity: MAP_OVERLAY_STRENGTH }}
             />
             <TrailSvg moments={moments} worldWidth={worldWidth} worldHeight={worldHeight} />

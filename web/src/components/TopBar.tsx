@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "motion/react";
 import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useMusic } from "../contexts/MusicContext";
 
 interface TopBarProps {
   onMenuOpen: () => void;
@@ -53,6 +54,7 @@ export function TopBar({ onMenuOpen }: TopBarProps) {
   const { t } = useTranslation();
   const reducedMotion = useReducedMotion();
   const [tutorialVisible, dismissTutorial] = useMenuTutorial(CLIMB_PATHS.includes(location.pathname));
+  const { isOn: musicOn, toggle: toggleMusic } = useMusic();
 
   return (
     <header className="sticky top-0 z-30 flex h-[var(--topbar-h)] items-center justify-between border-b-2 border-panel-border bg-panel px-3">
@@ -62,41 +64,59 @@ export function TopBar({ onMenuOpen }: TopBarProps) {
       >
         ABC Trip 2026
       </button>
-      <div className="relative flex items-center">
+      <div className="flex items-center">
         <button
-          onClick={() => {
-            dismissTutorial();
-            onMenuOpen();
-          }}
-          aria-label={t("nav.menu")}
-          className="flex min-h-11 min-w-11 items-center gap-1.5 px-2 font-pixel text-ink"
+          onClick={toggleMusic}
+          aria-label={t(musicOn ? "nav.musicOn" : "nav.musicOff")}
+          aria-pressed={musicOn}
+          className="flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 px-2"
         >
-          <span aria-hidden className="text-lg leading-none">☰</span>
-          <span className="text-[10px] uppercase leading-none">{t("nav.menu")}</span>
+          <span
+            aria-hidden
+            className={`text-lg leading-none ${musicOn ? "text-accent-strong" : "text-ink-dim"}`}
+          >
+            ♪
+          </span>
+          <span className="text-[8px] uppercase leading-none text-ink-dim">
+            {t(musicOn ? "nav.musicStateOn" : "nav.musicStateOff")}
+          </span>
         </button>
-        <AnimatePresence>
-          {tutorialVisible && (
-            <motion.div
-              role="note"
-              onClick={dismissTutorial}
-              className="absolute right-0 top-full z-40 mt-3 w-40 cursor-pointer border-2 border-panel-border bg-panel px-3 py-2 font-pixel text-[9px] leading-relaxed text-ink shadow-[3px_3px_0_0_var(--color-bg)]"
-              initial={reducedMotion ? false : { opacity: 0, y: -4 }}
-              animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
-              exit={reducedMotion ? undefined : { opacity: 0 }}
-              transition={{ duration: reducedMotion ? 0 : 0.2 }}
-            >
-              <span
-                aria-hidden
-                className="absolute -top-[9px] right-4 h-0 w-0 border-x-[9px] border-x-transparent border-b-[9px] border-b-panel-border"
-              />
-              <span
-                aria-hidden
-                className="absolute -top-[7px] right-[18px] h-0 w-0 border-x-[7px] border-x-transparent border-b-[7px] border-b-panel"
-              />
-              {t("nav.menuTutorial")}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="relative flex items-center">
+          <button
+            onClick={() => {
+              dismissTutorial();
+              onMenuOpen();
+            }}
+            aria-label={t("nav.menu")}
+            className="flex min-h-11 min-w-11 items-center gap-1.5 px-2 font-pixel text-ink"
+          >
+            <span aria-hidden className="text-lg leading-none">☰</span>
+            <span className="text-[10px] uppercase leading-none">{t("nav.menu")}</span>
+          </button>
+          <AnimatePresence>
+            {tutorialVisible && (
+              <motion.div
+                role="note"
+                onClick={dismissTutorial}
+                className="absolute right-0 top-full z-40 mt-3 w-40 cursor-pointer border-2 border-panel-border bg-panel px-3 py-2 font-pixel text-[9px] leading-relaxed text-ink shadow-[3px_3px_0_0_var(--color-bg)]"
+                initial={reducedMotion ? false : { opacity: 0, y: -4 }}
+                animate={reducedMotion ? undefined : { opacity: 1, y: 0 }}
+                exit={reducedMotion ? undefined : { opacity: 0 }}
+                transition={{ duration: reducedMotion ? 0 : 0.2 }}
+              >
+                <span
+                  aria-hidden
+                  className="absolute -top-[9px] right-4 h-0 w-0 border-x-[9px] border-x-transparent border-b-[9px] border-b-panel-border"
+                />
+                <span
+                  aria-hidden
+                  className="absolute -top-[7px] right-[18px] h-0 w-0 border-x-[7px] border-x-transparent border-b-[7px] border-b-panel"
+                />
+                {t("nav.menuTutorial")}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </header>
   );
