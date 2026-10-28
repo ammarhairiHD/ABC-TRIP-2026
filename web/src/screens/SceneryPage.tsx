@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import Lightbox from "yet-another-react-lightbox";
+import { DownloadButton } from "../components/DownloadButton";
 import Video from "yet-another-react-lightbox/plugins/video";
 import "yet-another-react-lightbox/styles.css";
 import { useScenery } from "../hooks/useScenery";
@@ -523,6 +524,7 @@ export function SceneryPage() {
         index={viewerIndex ?? 0}
         slides={slides}
         plugins={[Video]}
+        toolbar={{ buttons: [<DownloadButton key="download" />, "close"] }}
       />
     </div>
   );

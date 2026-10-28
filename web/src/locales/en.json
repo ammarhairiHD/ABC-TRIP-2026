@@ -4,7 +4,7 @@
   "climb": { "start": "Start", "day": "Day {{n}}", "now": "Day {{n}} · {{altitude}}", "more": "+ {{count}} more", "seePhotos": "See the {{count}} photos", "photosHint": "↓ photos" },
   "moment": { "challenge": "Challenge", "highlight": "Highlight", "funny": "Funny", "farewell": "Farewell", "inThisMoment": "In this moment", "previous": "Previous moment", "next": "Next moment", "backToClimb": "Back to the climb" },
   "viewer": { "inThisPhoto": "In this photo", "partOfMoment": "Part of the moment: {{title}}", "download": "Download original", "close": "Close", "previous": "Previous", "next": "Next" },
-  "unlock": { "title": "Enter the download code", "body": "Ask Ammar for the code. It stays unlocked until you close this tab.", "code": "Code", "submit": "Unlock and download", "cancel": "Cancel", "wrong": "That code isn't right. Try again.", "unlocked": "Unlocked for this tab" },
+  "unlock": { "title": "Enter the download code", "body": "Ask Ammar for the code. It stays unlocked until you close this tab.", "code": "Code", "submit": "Unlock and download", "cancel": "Cancel", "wrong": "That code isn't right. Try again.", "unlocked": "Unlocked for this tab", "rateLimited": "Too many attempts. Wait a minute and try again." },
   "person": { "journey": "{{name}}'s Himalaya", "summary": "{{photos}} photos · {{videos}} videos · {{days}} of 11 days", "first": "First · Day {{n}}", "last": "Last · Day {{n}}", "mostWith": "Most often with", "together": "Together with", "addPerson": "Add person", "share": "Share this journey", "photos": "Photos", "trailBuddy": "Trail buddy" },
   "badge": {
     "strong": { "name": "The Strongest", "description": "Carried more than their fair share, every single day." },

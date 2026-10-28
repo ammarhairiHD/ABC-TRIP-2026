@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence, motion } from "motion/react";
 import Lightbox from "yet-another-react-lightbox";
+import { DownloadButton } from "../components/DownloadButton";
 import Video from "yet-another-react-lightbox/plugins/video";
 import "yet-another-react-lightbox/styles.css";
 import { usePerson } from "../hooks/usePerson";
@@ -214,6 +215,7 @@ export function ProfilePage() {
         index={viewerIndex ?? 0}
         slides={slides}
         plugins={[Video]}
+        toolbar={{ buttons: [<DownloadButton key="download" />, "close"] }}
       />
 
       <BadgeDialog

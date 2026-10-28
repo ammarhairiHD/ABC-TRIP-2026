@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Lightbox from "yet-another-react-lightbox";
+import { DownloadButton } from "../components/DownloadButton";
 import Video from "yet-another-react-lightbox/plugins/video";
 import "yet-another-react-lightbox/styles.css";
 import { useDay } from "../hooks/useDay";
@@ -178,6 +179,7 @@ export function GalleryPage() {
         index={viewerIndex ?? 0}
         slides={slides}
         plugins={[Video]}
+        toolbar={{ buttons: [<DownloadButton key="download" />, "close"] }}
       />
     </div>
   );

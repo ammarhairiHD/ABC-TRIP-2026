@@ -31,6 +31,18 @@ export function buildMediaUrls(base: string, id: string, type: MediaType): Media
 }
 
 /**
+ * himalaya-originals R2 key for a media item's full-quality file. Verified
+ * against abc-face-tools' out/.publish_manifest.json (every one of its
+ * "himalaya-originals" entries matches this exact shape) rather than just
+ * inferred from source -- prepare.py/video.py (people media) and
+ * prepare_alya.py (Alya's scenery originals) all write through the same
+ * ORIGINALS_DIR / f"{item_id}.jpg" / ".mp4" path.
+ */
+export function buildOriginalKey(id: string, type: MediaType): string {
+  return type === "video" ? `originals/${id}.mp4` : `originals/${id}.jpg`;
+}
+
+/**
  * Moment-card hero preview: an ~8s/480p/muted clip made by abc-face-tools'
  * publish/preview_clips.py for any moment whose hero is a video (key pattern
  * `video/{id}-preview.mp4`, not stored in D1 since it's a pure function of

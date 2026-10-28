@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-// Generates the EDITOR_CODE_HASH secret for the Scenery editor (Ammar +
-// Alya share one code). Two modes:
+// Generates a code-hash secret for one of /api/unlock's scopes --
+// EDITOR_CODE_HASH (scenery-editor, Ammar + Alya share one code) or
+// DOWNLOAD_CODE_HASH (download, shared with the whole group). One script
+// for both: they're the same construction, just a different secret name.
 //
-//   node scripts/generate-editor-code.mjs          random code (default)
-//   node scripts/generate-editor-code.mjs --own    type your own code
+//   node scripts/generate-unlock-code.mjs EDITOR_CODE_HASH            random code
+//   node scripts/generate-unlock-code.mjs DOWNLOAD_CODE_HASH --own    type your own code
 //
 // No PBKDF2 here: Workers' free-plan CPU-time limit is too small for a slow
 // hash on every /api/unlock request, so this leans on the code itself being
@@ -129,7 +131,7 @@ function weaknesses(code) {
   return problems;
 }
 
-async function ownCodeFlow() {
+async function ownCodeFlow(secretName) {
   const first = (await readHiddenLine("Enter your code (hidden): ")).trim();
   const second = (await readHiddenLine("Type it again to confirm: ")).trim();
 
@@ -153,35 +155,44 @@ async function ownCodeFlow() {
   const secretValue = await hashCode(first);
 
   console.log("");
-  console.log("Secret value for EDITOR_CODE_HASH (paste it when `wrangler secret put` asks).");
-  console.log("The code itself is never printed -- make sure you (and Alya) still have it written down:");
+  console.log(`Secret value for ${secretName} (paste it when \`wrangler secret put ${secretName}\` asks).`);
+  console.log("The code itself is never printed -- make sure whoever needs it still has it written down:");
   console.log("");
   console.log(`    ${secretValue}`);
   console.log("");
 }
 
-async function randomCodeFlow() {
+async function randomCodeFlow(secretName) {
   const code = generateRandomCode();
   const secretValue = await hashCode(code);
 
   console.log("");
-  console.log("Give this code to Ammar and Alya. Write it down somewhere safe --");
+  console.log("Give this code to whoever needs it. Write it down somewhere safe --");
   console.log("it will not be shown again, and this script never saves it to disk:");
   console.log("");
   console.log(`    ${code}`);
   console.log("");
-  console.log("Secret value for EDITOR_CODE_HASH (paste it when `wrangler secret put` asks):");
+  console.log(`Secret value for ${secretName} (paste it when \`wrangler secret put ${secretName}\` asks):`);
   console.log("");
   console.log(`    ${secretValue}`);
   console.log("");
 }
 
 async function main() {
-  const useOwnCode = process.argv.includes("--own");
+  const args = process.argv.slice(2);
+  const secretName = args.find((arg) => !arg.startsWith("--"));
+  if (!secretName) {
+    console.error("Usage: node scripts/generate-unlock-code.mjs <SECRET_NAME> [--own]");
+    console.error("  e.g. node scripts/generate-unlock-code.mjs DOWNLOAD_CODE_HASH");
+    process.exitCode = 1;
+    return;
+  }
+
+  const useOwnCode = args.includes("--own");
   if (useOwnCode) {
-    await ownCodeFlow();
+    await ownCodeFlow(secretName);
   } else {
-    await randomCodeFlow();
+    await randomCodeFlow(secretName);
   }
 }
 

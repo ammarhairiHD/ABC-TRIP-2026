@@ -11,13 +11,17 @@ interface ScopeConfig {
   ttlSeconds: number;
 }
 
-// Reusable across scopes: when the download code (root CLAUDE.md) is built,
-// it gets its own case here (its own secret, its own TTL), not a second
-// endpoint or a second copy of the sign/verify logic.
+// Reusable across scopes: the download code (root CLAUDE.md) gets its own
+// case here (its own secret, its own TTL), not a second endpoint or a
+// second copy of the sign/verify logic. This token is never put in a URL --
+// see api/src/routes/download.ts, which only accepts it as an Authorization
+// header to mint short-lived, single-id signed links.
 function scopeConfig(scope: string): ScopeConfig | null {
   switch (scope) {
     case "scenery-editor":
       return { codeHash: env.EDITOR_CODE_HASH, ttlSeconds: 6 * 60 * 60 };
+    case "download":
+      return { codeHash: env.DOWNLOAD_CODE_HASH, ttlSeconds: 24 * 60 * 60 };
     default:
       return null;
   }

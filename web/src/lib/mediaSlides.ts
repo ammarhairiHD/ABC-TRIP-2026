@@ -25,7 +25,18 @@ export function buildLightboxSlides(media: readonly MediaLike[]) {
           muted: true,
           controls: true,
           playsInline: true,
+          // Not part of the slide type -- carried through so DownloadButton
+          // (read via the lightbox's own useLightboxState()) knows which
+          // media id/type is on screen without a second lookup.
+          mediaId: item.id,
+          mediaType: item.type,
         }
-      : { src: item.webUrl ?? item.thumbUrl, width: item.width, height: item.height }
+      : {
+          src: item.webUrl ?? item.thumbUrl,
+          width: item.width,
+          height: item.height,
+          mediaId: item.id,
+          mediaType: item.type,
+        }
   );
 }

@@ -81,8 +81,8 @@ export async function verifyToken(token: string, secret: string): Promise<Verify
 }
 
 /**
- * Code-hash secrets (EDITOR_CODE_HASH, and later DOWNLOAD_CODE_HASH) are
- * stored as "<saltHex>:<hmacHex>" -- see scripts/generate-editor-code.mjs.
+ * Code-hash secrets (EDITOR_CODE_HASH, DOWNLOAD_CODE_HASH) are stored as
+ * "<saltHex>:<hmacHex>" -- see scripts/generate-unlock-code.mjs.
  * Salted HMAC-SHA256, not PBKDF2: Workers' free-plan CPU-time limit is too
  * small for a slow hash, so this leans on the code being long and random
  * (never a human-chosen password) plus the rate limit in routes/unlock.ts.
@@ -93,6 +93,36 @@ export async function verifyCode(code: string, codeHashSecret: string): Promise<
   if (!saltHex || !expectedHex) return false;
   const key = await hmacKey(fromHex(saltHex));
   return crypto.subtle.verify("HMAC", key, fromHex(expectedHex), new TextEncoder().encode(code));
+}
+
+/**
+ * Signs a single-id, single-use download link good for 60 seconds:
+ * base64url(HMAC-SHA256(secret, "<id>:<exp>")). Deliberately separate from
+ * signToken -- the long-lived (24h) download-scope token from /api/unlock
+ * never goes in a URL; it's only ever sent as an Authorization header to
+ * mint one of these short-lived signatures per file, which is what
+ * actually appears in the GET /api/download/:id link. The ":" matters: id
+ * is a hex content hash so it can never contain one, which keeps two
+ * different (id, exp) pairs from ever signing the same string.
+ */
+export async function signDownloadLink(id: string, exp: number, secret: string): Promise<string> {
+  const key = await hmacKey(new TextEncoder().encode(secret));
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${id}:${exp}`));
+  return toBase64Url(new Uint8Array(signature));
+}
+
+/** `subtle.verify` gives the constant-time comparison, same reasoning as
+ * verifyToken/verifyCode above. */
+export async function verifyDownloadLink(id: string, exp: number, sig: string, secret: string): Promise<boolean> {
+  if (!Number.isFinite(exp) || exp <= Math.floor(Date.now() / 1000)) return false;
+  let sigBytes: Uint8Array;
+  try {
+    sigBytes = fromBase64Url(sig);
+  } catch {
+    return false;
+  }
+  const key = await hmacKey(new TextEncoder().encode(secret));
+  return crypto.subtle.verify("HMAC", key, sigBytes, new TextEncoder().encode(`${id}:${exp}`));
 }
 
 /** Express middleware: 401s unless Authorization is a Bearer token, signed

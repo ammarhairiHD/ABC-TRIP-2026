@@ -55,7 +55,8 @@
     "submit": "Buka dan muat turun",
     "cancel": "Batal",
     "wrong": "Kod tidak betul. Cuba lagi.",
-    "unlocked": "Dibuka untuk tab ini"
+    "unlocked": "Dibuka untuk tab ini",
+    "rateLimited": "Terlalu banyak percubaan. Tunggu seminit dan cuba lagi."
   },
   "person": {
     "journey": "Himalaya {{name}}",
